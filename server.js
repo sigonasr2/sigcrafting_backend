@@ -54,6 +54,131 @@ function CleanUp(arr,vals){
 	})
 }
 
+app.get('/augment_type',(req,res)=>{
+	if (req.query.id) {
+		db.query('select * from augment_type where id=$1',[req.query.id])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else
+	if (req.query.name) {
+		db.query('select * from augment_type where name ilike $1',[req.query.name])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else {
+		res.status(300).send("Invalid query!")
+	}
+})
+
+app.get('/skill',(req,res)=>{
+	if (req.query.id) {
+		db.query('select * from skill where id=$1',[req.query.id])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else
+	if (req.query.name) {
+		db.query('select * from skill where name ilike $1',[req.query.name])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else {
+		res.status(300).send("Invalid query!")
+	}
+})
+
+app.get('/skill_type',(req,res)=>{
+	if (req.query.id) {
+		db.query('select * from skill_type where id=$1',[req.query.id])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else
+	if (req.query.name) {
+		db.query('select * from skill_type where name ilike $1',[req.query.name])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else {
+		res.status(300).send("Invalid query!")
+	}
+})
+
+app.get('/class',(req,res)=>{
+	if (req.query.id) {
+		db.query('select * from class where id=$1',[req.query.id])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else
+	if (req.query.name) {
+		db.query('select * from class where name ilike $1',[req.query.name])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else {
+		res.status(300).send("Invalid query!")
+	}
+})
+
+app.get('/weapon_type',(req,res)=>{
+	if (req.query.id) {
+		db.query('select * from weapon_type where id=$1',[req.query.id])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else
+	if (req.query.name) {
+		db.query('select * from weapon_type where name ilike $1',[req.query.name])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else {
+		res.status(300).send("Invalid query!")
+	}
+})
+
+app.get('/weapon',(req,res)=>{
+	if (req.query.id) {
+		db.query('select * from weapon where id=$1',[req.query.id])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else
+	if (req.query.name) {
+		db.query('select * from weapon where name ilike $1',[req.query.name])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else 
+	if (req.query.rarity) {
+		db.query('select * from weapon where rarity=$1',[req.query.rarity])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else {
+		res.status(300).send("Invalid query!")
+	}
+})
+
+app.get('/potential',(req,res)=>{
+	if (req.query.id) {
+		db.query('select * from potential where id=$1',[req.query.id])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else
+	if (req.query.name) {
+		db.query('select * from potential where name ilike $1',[req.query.name])
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
+	} else {
+		res.status(300).send("Invalid query!")
+	}
+})
+
 app.get('/data',(req,res)=>{
 	var finalresult = {}
 	db.query('select * from potential_data inner join potential on potential_data.potential_id=potential.id')
