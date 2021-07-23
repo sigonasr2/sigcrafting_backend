@@ -48,116 +48,116 @@ new Pool({
 const ENDPOINTDATA=[
 	{
 		endpoint:"class",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["name"],
+		optionalfields:["icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"class_level_data",
-		requiredfields:["name","icon"],
+		requiredfields:["class_id","level","hp","atk","def"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"class_weapon_type_data",
-		requiredfields:["name","icon"],
+		requiredfields:["class_id","weapon_type_id"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"weapon",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["name","rarity","level_req","atk"],
+		optionalfields:["potential_id","variance","base_affix_slots","drop_info","pb_gauge_build","icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"weapon_existence_data",
-		requiredfields:["name","icon"],
+		requiredfields:["weapon_type_id","weapon_id"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"weapon_type",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["name"],
+		optionalfields:["icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"armor",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["name","rarity","level_req","def"],
+		optionalfields:["hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"potential",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["name"],
+		optionalfields:["icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"potential_data",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["potential_id","level"],
+		optionalfields:["mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"builds",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["user_id","creator","build_name","class1","created_on","last_modified","data"],
+		optionalfields:["class2","likes"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"skill",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["name","skill_type_id"],
+		optionalfields:["icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"skill_type",
-		requiredfields:["name","icon"],
+		requiredfields:["name"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"skill_data",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["skill_id","level"],
+		optionalfields:["variance","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"augment",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["augment_type_id","level"],
+		optionalfields:["variance","hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","affix_success_rate","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"augment_type",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["name"],
+		optionalfields:["icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"food",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["material"],
+		optionalfields:["potency","pp","dmg_res","hp","pp_consumption","pp_recovery","weak_point_dmg","hp_recovery"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"food_mult",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["amount"],
+		optionalfields:["potency","pp","dmg_res","hp","pp_consumption","pp_recovery","weak_point_dmg","hp_recovery"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"roles",
-		requiredfields:["name","icon"],
+		requiredfields:["name"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"users",
-		requiredfields:["name","icon"],
-		optionalfields:[],
+		requiredfields:["username","email","created_on","role_id"],
+		optionalfields:["avatar"],
 		excludedfields:["password_hash"] //Fields to not output in GET.
 	}
 ]
@@ -173,6 +173,34 @@ function CreateDynamicEndpoints() {
 				res.status(500).send(err.message)
 			})
 		})
+		
+		
+		app.post("/"+endpoint.endpoint,(req,res)=>{
+			
+			var allExist=true
+			endpoint.requiredfields.forEach((field)=>{
+				if (!(field in req.body)) {
+					allExist=false;
+				}
+			})
+			if (!allExist) {
+				res.status(300).send("Invalid query!")
+				return
+			}
+			
+			var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+			//console.log(combinedfields)
+			var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+			
+			db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+")",all_filled_fields.map((field)=>req.body[field]))
+			.then((data)=>{
+				res.status(200).json(data.rows)
+			})
+			.catch((err)=>{
+				res.status(500).send(err.message)
+			})
+		})
+		
 	})
 }
 

@@ -31,11 +31,13 @@ CREATE TABLE "class" (
 );
 
 CREATE TABLE "class_weapon_type_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
   "class_id" int,
   "weapon_type_id" int
 );
 
 CREATE TABLE "class_level_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
   "class_id" int,
   "level" int,
   "hp" int,
@@ -70,6 +72,7 @@ CREATE TABLE "potential" (
 );
 
 CREATE TABLE "potential_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
   "potential_id" int,
   "level" int,
   "mel_dmg" float,
@@ -157,6 +160,7 @@ CREATE TABLE "skill" (
 );
 
 CREATE TABLE "skill_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
   "skill_id" int,
   "level" int,
   "variance" float,
@@ -205,6 +209,7 @@ CREATE TABLE "builds" (
 );
 
 CREATE TABLE "weapon_existence_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
   "weapon_type_id" int,
   "weapon_id" int
 );
