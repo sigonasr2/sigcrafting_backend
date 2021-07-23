@@ -192,7 +192,7 @@ function CreateDynamicEndpoints() {
 			//console.log(combinedfields)
 			var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 			
-			db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+")",all_filled_fields.map((field)=>req.body[field]))
+			db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
 			.then((data)=>{
 				res.status(200).json(data.rows)
 			})
@@ -201,6 +201,37 @@ function CreateDynamicEndpoints() {
 			})
 		})
 		
+		app.patch("/"+endpoint.endpoint,(req,res)=>{
+			if (req.body.id) {
+				var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+				//console.log(combinedfields)
+				var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+				
+				db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
+				.then((data)=>{
+					res.status(200).json(data.rows)
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			} else {
+				res.status(300).send("Invalid query!")
+			}
+		})
+		
+		app.delete("/"+endpoint.endpoint,(req,res)=>{
+			if (req.body.id) {
+				db.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
+				.then((data)=>{
+					res.status(200).json(data.rows)
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			} else {
+				res.status(300).send("Invalid query!")
+			}
+		})
 	})
 }
 
