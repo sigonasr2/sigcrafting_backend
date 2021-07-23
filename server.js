@@ -51,8 +51,130 @@ const ENDPOINTDATA=[
 		requiredfields:["name","icon"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"class_level_data",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"class_weapon_type_data",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"weapon",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"weapon_existence_data",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"weapon_type",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"armor",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"potential",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"potential_data",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"builds",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"skill",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"skill_type",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"skill_data",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"augment",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"augment_type",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"food",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"food_mult",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"roles",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"users",
+		requiredfields:["name","icon"],
+		optionalfields:[],
+		excludedfields:["password_hash"] //Fields to not output in GET.
 	}
 ]
+
+function CreateDynamicEndpoints() {
+	ENDPOINTDATA.map((endpoint)=>{
+		app.get("/"+endpoint.endpoint,(req,res)=>{
+			db.query('select * from '+endpoint.endpoint)
+			.then((data)=>{
+				res.status(200).json({fields:data.fields,rows:data.rows})
+			})
+			.catch((err)=>{
+				res.status(500).send(err.message)
+			})
+		})
+	})
+}
 
 function CleanUp(arr,vals){
 	return arr.map((arrVal)=>{
@@ -110,3 +232,5 @@ app.get('/data',(req,res)=>{
 		res.status(500).send(err.message);
 	})
 })
+
+CreateDynamicEndpoints()
