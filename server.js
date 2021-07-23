@@ -118,7 +118,10 @@ app.get('/class',(req,res)=>{
 			res.status(200).json(data.rows)
 		})
 	} else {
-		res.status(300).send("Invalid query!")
+		db.query('select * from class')
+		.then((data)=>{
+			res.status(200).json(data.rows)
+		})
 	}
 })
 
