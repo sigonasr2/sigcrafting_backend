@@ -165,7 +165,7 @@ const ENDPOINTDATA=[
 function CreateDynamicEndpoints() {
 	ENDPOINTDATA.map((endpoint)=>{
 		app.get("/"+endpoint.endpoint,(req,res)=>{
-			db.query('select * from '+endpoint.endpoint)
+			db.query('select * from '+endpoint.endpoint+" order by id desc")
 			.then((data)=>{
 				res.status(200).json({fields:data.fields,rows:data.rows})
 			})
@@ -184,7 +184,7 @@ function CreateDynamicEndpoints() {
 				}
 			})
 			if (!allExist) {
-				res.status(300).send("Invalid query!")
+				res.status(300).send("Required fields are: "+endpoint.requiredfields.filter((field)=>!(field in req.body)).join(','))
 				return
 			}
 			
