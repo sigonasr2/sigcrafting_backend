@@ -1,6 +1,23 @@
-delete from food_mult;delete from food;delete from armor;delete from augment;
-delete from augment_type;delete from skill_data;delete from skill;delete from skill_type;delete from builds;delete from users;delete from roles;
-delete from weapon_existence_data;delete from class_weapon_type_data;delete from class_level_data;delete from potential_data;delete from weapon;delete from weapon_type;delete from class;delete from potential;
+delete from food_mult;
+delete from food;
+delete from armor;
+delete from augment;
+delete from augment_type;
+delete from skill_data;
+delete from skill;
+delete from skill_type;
+delete from builds;
+delete from users;
+delete from roles;
+delete from weapon_existence_data;
+delete from class_weapon_type_data;
+delete from class_level_data;
+delete from potential_data;
+delete from weapon;
+delete from weapon_type;
+delete from class;
+delete from potential;
+
 insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery)
 	values(0,1,0,1,1,1,1,1,1);
 insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery)
@@ -137,14 +154,14 @@ insert into roles(name)
 insert into roles(name)
 	values('Guest');
 	
-insert into users(username,email,password_hash,created_on,role_id,avatar)
+insert into users(username,email,password_hash,created_on,roles_id,avatar)
 	values('sigonasr2','sigonasr2@gmail.com','ABCDEFG','2021-07-13 04:30+00',(select id from roles where name='Administrator'),'');
-insert into users(username,email,password_hash,created_on,role_id,avatar)
+insert into users(username,email,password_hash,created_on,roles_id,avatar)
 	values('sigonasr3','sigonasr3@gmail.com','ABCDEF','2021-07-14 05:30+00',(select id from roles where name='Editor'),'');
 	
-insert into builds(user_id,creator,build_name,class1,class2,created_on,last_modified,likes,data)
+insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data)
 	values((select id from users where username='sigonasr2'),'sigonasr2','Test Build',(select id from class where name='Ranger'),(select id from class where name='Force'),'2021-07-13 04:30+00','2021-07-13 04:30+00',5,'<DATA STRING>');
-insert into builds(user_id,creator,build_name,class1,class2,created_on,last_modified,likes,data)
+insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data)
 	values((select id from users where username='sigonasr3'),'sigonasr3','Test Build2',(select id from class where name='Techter'),(select id from class where name='Fighter'),'2021-07-13 06:30+00','2021-07-13 07:30+00',27,'<DATA STRING>');
 	
 insert into skill_type(name)

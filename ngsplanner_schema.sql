@@ -186,7 +186,7 @@ CREATE TABLE "users" (
   "email" text UNIQUE,
   "password_hash" text,
   "created_on" timestamptz,
-  "role_id" int,
+  "roles_id" int,
   "avatar" text
 );
 
@@ -197,7 +197,7 @@ CREATE TABLE "roles" (
 
 CREATE TABLE "builds" (
   "id" SERIAL UNIQUE PRIMARY KEY,
-  "user_id" int,
+  "users_id" int,
   "creator" text,
   "build_name" text,
   "class1" int,
@@ -234,13 +234,13 @@ ALTER TABLE "skill_data" ADD FOREIGN KEY ("skill_id") REFERENCES "skill" ("id");
 
 ALTER TABLE "skill" ADD FOREIGN KEY ("skill_type_id") REFERENCES "skill_type" ("id");
 
-ALTER TABLE "builds" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "builds" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
 ALTER TABLE "builds" ADD FOREIGN KEY ("class1") REFERENCES "class" ("id");
 
 ALTER TABLE "builds" ADD FOREIGN KEY ("class2") REFERENCES "class" ("id");
 
-ALTER TABLE "users" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("id");
+ALTER TABLE "users" ADD FOREIGN KEY ("roles_id") REFERENCES "roles" ("id");
 
 ALTER TABLE "weapon_existence_data" ADD FOREIGN KEY ("weapon_id") REFERENCES "weapon" ("id");
 
