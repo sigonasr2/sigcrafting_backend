@@ -73,7 +73,7 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"weapon_existence_data",
 		requiredfields:["weapon_type_id","weapon_id"],
-		optionalfields:[],
+		optionalfields:["popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -85,7 +85,7 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"armor",
 		requiredfields:["name","rarity","level_req","def"],
-		optionalfields:["hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","icon"],
+		optionalfields:["hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","icon","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -102,8 +102,8 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"builds",
-		requiredfields:["user_id","creator","build_name","class1","created_on","last_modified","data"],
-		optionalfields:["class2","likes"],
+		requiredfields:["users_id","creator","build_name","class1","created_on","last_modified","data"],
+		optionalfields:["class2","likes","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -121,13 +121,13 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"skill_data",
 		requiredfields:["skill_id","level"],
-		optionalfields:["variance","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res"],
+		optionalfields:["variance","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"augment",
 		requiredfields:["augment_type_id","level"],
-		optionalfields:["variance","hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","affix_success_rate","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build"],
+		optionalfields:["variance","hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","affix_success_rate","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -139,7 +139,7 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"food",
 		requiredfields:["material"],
-		optionalfields:["potency","pp","dmg_res","hp","pp_consumption","pp_recovery","weak_point_dmg","hp_recovery"],
+		optionalfields:["potency","pp","dmg_res","hp","pp_consumption","pp_recovery","weak_point_dmg","hp_recovery","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -156,8 +156,8 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"users",
-		requiredfields:["username","email","created_on","role_id"],
-		optionalfields:["avatar"],
+		requiredfields:["username","email","created_on","roles_id"],
+		optionalfields:["avatar","editors_choice"],
 		excludedfields:["password_hash"] //Fields to not output in GET.
 	}
 ]
@@ -261,10 +261,10 @@ app.get('/data',(req,res)=>{
 	})
 	.then((data)=>{
 		finalresult["class_level_data"]=CleanUp(data.rows,["id","class_id","name"])
-		return db.query('select *,class.name as class2 from (select *,class.name as class1 from builds inner join users on users.id=builds.user_id inner join class on class.id=builds.class1)t inner join class on class.id=t.class2')
+		return db.query('select *,class.name as class2 from (select *,class.name as class1 from builds inner join users on users.id=builds.users_id inner join class on class.id=builds.class1)t inner join class on class.id=t.class2')
 	})
 	.then((data)=>{
-		finalresult["builds"]=CleanUp(data.rows,["id","user_id","username","email","password_hash","created_on","role_id","name"])
+		finalresult["builds"]=CleanUp(data.rows,["id","users_id","username","email","password_hash","created_on","roles_id","name"])
 		return db.query('select *,skill.name as skill_name,skill_type.name as skill_type_name from skill_data inner join skill on skill.id=skill_data.skill_id inner join skill_type on skill.skill_type_id=skill_type.id')
 	})
 	.then((data)=>{

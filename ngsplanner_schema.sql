@@ -21,7 +21,9 @@ CREATE TABLE "food" (
   "pp_consumption" boolean,
   "pp_recovery" boolean,
   "weak_point_dmg" boolean,
-  "hp_recovery" boolean
+  "hp_recovery" boolean,
+  "popularity" int,
+  "editors_choice" int
 );
 
 CREATE TABLE "class" (
@@ -121,13 +123,15 @@ CREATE TABLE "armor" (
   "poison_res" float,
   "battle_power_value" int,
   "pb_gauge_build" float,
-  "icon" text
+  "icon" text,
+  "popularity" int,
+  "editors_choice" int
 );
 
 CREATE TABLE "augment" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "augment_type_id" int,
-  "level" int,
+  "name" text,
   "variance" float,
   "hp" int,
   "pp" int,
@@ -149,7 +153,9 @@ CREATE TABLE "augment" (
   "panic_res" float,
   "poison_res" float,
   "battle_power_value" int,
-  "pb_gauge_build" float
+  "pb_gauge_build" float,
+  "popularity" int,
+  "editors_choice" int
 );
 
 CREATE TABLE "skill" (
@@ -172,7 +178,9 @@ CREATE TABLE "skill_data" (
   "pp_cost_reduction" float,
   "active_pp_recovery" float,
   "natural_pp_recovery" float,
-  "dmg_res" float
+  "dmg_res" float,
+  "popularity" int,
+  "editors_choice" int
 );
 
 CREATE TABLE "skill_type" (
@@ -186,8 +194,9 @@ CREATE TABLE "users" (
   "email" text UNIQUE,
   "password_hash" text,
   "created_on" timestamptz,
-  "role_id" int,
-  "avatar" text
+  "roles_id" int,
+  "avatar" text,
+  "editors_choice" int
 );
 
 CREATE TABLE "roles" (
@@ -197,7 +206,7 @@ CREATE TABLE "roles" (
 
 CREATE TABLE "builds" (
   "id" SERIAL UNIQUE PRIMARY KEY,
-  "user_id" int,
+  "users_id" int,
   "creator" text,
   "build_name" text,
   "class1" int,
@@ -205,13 +214,16 @@ CREATE TABLE "builds" (
   "created_on" timestamptz,
   "last_modified" timestamptz,
   "likes" int,
-  "data" text
+  "data" text,
+  "editors_choice" int
 );
 
 CREATE TABLE "weapon_existence_data" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "weapon_type_id" int,
-  "weapon_id" int
+  "weapon_id" int,
+  "popularity" int,
+  "editors_choice" int
 );
 
 CREATE TABLE "augment_type" (
@@ -234,13 +246,13 @@ ALTER TABLE "skill_data" ADD FOREIGN KEY ("skill_id") REFERENCES "skill" ("id");
 
 ALTER TABLE "skill" ADD FOREIGN KEY ("skill_type_id") REFERENCES "skill_type" ("id");
 
-ALTER TABLE "builds" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "builds" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
 ALTER TABLE "builds" ADD FOREIGN KEY ("class1") REFERENCES "class" ("id");
 
 ALTER TABLE "builds" ADD FOREIGN KEY ("class2") REFERENCES "class" ("id");
 
-ALTER TABLE "users" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("id");
+ALTER TABLE "users" ADD FOREIGN KEY ("roles_id") REFERENCES "roles" ("id");
 
 ALTER TABLE "weapon_existence_data" ADD FOREIGN KEY ("weapon_id") REFERENCES "weapon" ("id");
 
