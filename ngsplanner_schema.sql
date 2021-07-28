@@ -64,7 +64,8 @@ CREATE TABLE "weapon" (
 CREATE TABLE "weapon_type" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "name" text,
-  "icon" text
+  "icon" text,
+  "dmg_type" int
 );
 
 CREATE TABLE "potential" (

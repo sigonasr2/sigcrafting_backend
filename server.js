@@ -78,7 +78,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"weapon_type",
-		requiredfields:["name"],
+		requiredfields:["name","dmg_type"],
 		optionalfields:["icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
@@ -126,7 +126,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"augment",
-		requiredfields:["augment_type_id","level"],
+		requiredfields:["augment_type_id","name"],
 		optionalfields:["variance","hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","affix_success_rate","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
