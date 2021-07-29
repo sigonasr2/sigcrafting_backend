@@ -54,7 +54,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"class_level_data",
-		requiredfields:["class_id","level","hp","atk","def"],
+		requiredfields:["class_id","level","hp","atk","def","name"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	},
@@ -96,7 +96,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"potential_data",
-		requiredfields:["potential_id","level"],
+		requiredfields:["potential_id","level","name"],
 		optionalfields:["mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build"],
 		excludedfields:[] //Fields to not output in GET.
 	},
@@ -120,7 +120,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"skill_data",
-		requiredfields:["skill_id","level"],
+		requiredfields:["skill_id","level","name"],
 		optionalfields:["variance","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
@@ -138,7 +138,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"food",
-		requiredfields:["material"],
+		requiredfields:["name"],
 		optionalfields:["potency","pp","dmg_res","hp","pp_consumption","pp_recovery","weak_point_dmg","hp_recovery","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
@@ -159,6 +159,12 @@ const ENDPOINTDATA=[
 		requiredfields:["username","email","created_on","roles_id"],
 		optionalfields:["avatar","editors_choice"],
 		excludedfields:["password_hash"] //Fields to not output in GET.
+	},
+	{
+		endpoint:"database_audit",
+		requiredfields:["action","table_name","row_name","row_id","new_value","date","users_id"],
+		optionalfields:["old_value"],
+		excludedfields:[] //Fields to not output in GET.
 	}
 ]
 

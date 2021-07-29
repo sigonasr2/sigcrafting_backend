@@ -1,3 +1,15 @@
+CREATE TABLE "database_audit" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "action" text,
+  "table_name" text,
+  "row_name" text,
+  "row_id" int,
+  "old_value" text,
+  "new_value" text,
+  "date" timestamptz,
+  "users_id" int
+);
+
 CREATE TABLE "food_mult" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "amount" int,
@@ -13,7 +25,7 @@ CREATE TABLE "food_mult" (
 
 CREATE TABLE "food" (
   "id" SERIAL UNIQUE PRIMARY KEY,
-  "material" text,
+  "name" text,
   "potency" boolean,
   "pp" boolean,
   "dmg_res" boolean,
@@ -40,6 +52,7 @@ CREATE TABLE "class_weapon_type_data" (
 
 CREATE TABLE "class_level_data" (
   "id" SERIAL UNIQUE PRIMARY KEY,
+  "name" text,
   "class_id" int,
   "level" int,
   "hp" int,
@@ -76,6 +89,7 @@ CREATE TABLE "potential" (
 
 CREATE TABLE "potential_data" (
   "id" SERIAL UNIQUE PRIMARY KEY,
+  "name" text,
   "potential_id" int,
   "level" int,
   "mel_dmg" float,
@@ -168,6 +182,7 @@ CREATE TABLE "skill" (
 
 CREATE TABLE "skill_data" (
   "id" SERIAL UNIQUE PRIMARY KEY,
+  "name" text,
   "skill_id" int,
   "level" int,
   "variance" float,
@@ -260,3 +275,5 @@ ALTER TABLE "weapon_existence_data" ADD FOREIGN KEY ("weapon_id") REFERENCES "we
 ALTER TABLE "weapon_existence_data" ADD FOREIGN KEY ("weapon_type_id") REFERENCES "weapon_type" ("id");
 
 ALTER TABLE "augment" ADD FOREIGN KEY ("augment_type_id") REFERENCES "augment_type" ("id");
+
+ALTER TABLE "database_audit" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");

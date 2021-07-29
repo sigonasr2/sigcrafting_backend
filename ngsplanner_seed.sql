@@ -17,15 +17,16 @@ delete from weapon;
 delete from weapon_type;
 delete from class;
 delete from potential;
+delete from database_audit;
 
 insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery)
 	values(0,1,0,1,1,1,1,1,1);
 insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery)
 	values(1,1.05,10,1.05,1.05,1,1,1,1);
 
-insert into food(material,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
+insert into food(name,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
 	values('Rich Aelio Meat',true,false,false,false,true,false,false,false,0,0);
-insert into food(material,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
+insert into food(name,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
 	values('Light Aelio Meat',true,false,false,false,false,true,false,false,0,0);
 	
 insert into class(name,icon) values('Hunter','/icons/UINGSClassHu.png');
@@ -60,90 +61,90 @@ insert into potential(name,icon) values('Berserk Unit','/icons/NGSUIItemPotentia
 insert into potential(name,icon) values('Wellspring Unit','/icons/NGSUIItemPotentialAbility.png');
 insert into potential(name,icon) values('Endurance Unit','/icons/NGSUIItemPotentialAbility.png');
 
-insert into class_level_data(class_id,level,hp,atk,def)
-	values((SELECT id from class WHERE name='Hunter'),1,300,450,304);
-insert into class_level_data(class_id,level,hp,atk,def)
-	values((SELECT id from class WHERE name='Hunter'),2,303,459,309);
-insert into class_level_data(class_id,level,hp,atk,def)
-	values((SELECT id from class WHERE name='Fighter'),1,280,454,301);
-insert into class_level_data(class_id,level,hp,atk,def)
-	values((SELECT id from class WHERE name='Ranger'),1,240,448,300);
+insert into class_level_data(class_id,name,level,hp,atk,def)
+	values((SELECT id from class WHERE name='Hunter' limit 1),'Hunter Lv.1',1,300,450,304);
+insert into class_level_data(class_id,name,level,hp,atk,def)
+	values((SELECT id from class WHERE name='Hunter' limit 1),'Hunter Lv.1',2,303,459,309);
+insert into class_level_data(class_id,name,level,hp,atk,def)
+	values((SELECT id from class WHERE name='Fighter' limit 1),'Fighter Lv.1',1,280,454,301);
+insert into class_level_data(class_id,name,level,hp,atk,def)
+	values((SELECT id from class WHERE name='Ranger' limit 1),'Ranger Lv.1',1,240,448,300);
 	
 insert into class_weapon_type_data(class_id,weapon_type_id)
-	values((SELECT id from class WHERE name='Hunter'),(SELECT id from weapon_type WHERE name='Sword'));
+	values((SELECT id from class WHERE name='Hunter' limit 1),(SELECT id from weapon_type WHERE name='Sword' limit 1));
 insert into class_weapon_type_data(class_id,weapon_type_id)
-	values((SELECT id from class WHERE name='Hunter'),(SELECT id from weapon_type WHERE name='Spear'));
+	values((SELECT id from class WHERE name='Hunter' limit 1),(SELECT id from weapon_type WHERE name='Spear' limit 1));
 insert into class_weapon_type_data(class_id,weapon_type_id)
-	values((SELECT id from class WHERE name='Hunter'),(SELECT id from weapon_type WHERE name='Wired Lance'));
+	values((SELECT id from class WHERE name='Hunter' limit 1),(SELECT id from weapon_type WHERE name='Wired Lance' limit 1));
 insert into class_weapon_type_data(class_id,weapon_type_id)
-	values((SELECT id from class WHERE name='Fighter'),(SELECT id from weapon_type WHERE name='Twin Dagger'));
+	values((SELECT id from class WHERE name='Fighter' limit 1),(SELECT id from weapon_type WHERE name='Twin Dagger' limit 1));
 insert into class_weapon_type_data(class_id,weapon_type_id)
-	values((SELECT id from class WHERE name='Fighter'),(SELECT id from weapon_type WHERE name='Double Saber'));
+	values((SELECT id from class WHERE name='Fighter' limit 1),(SELECT id from weapon_type WHERE name='Double Saber' limit 1));
 insert into class_weapon_type_data(class_id,weapon_type_id)
-	values((SELECT id from class WHERE name='Fighter'),(SELECT id from weapon_type WHERE name='Knuckles'));
+	values((SELECT id from class WHERE name='Fighter' limit 1),(SELECT id from weapon_type WHERE name='Knuckles' limit 1));
 	
 insert into weapon(name,rarity,level_req,atk,potential_id,variance,base_affix_slots,drop_info,pb_gauge_build,icon)
-	values('Primm',1,1,177,(select id from potential where name='Recycler Unit'),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
+	values('Primm',1,1,177,(select id from potential where name='Recycler Unit' limit 1),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
 insert into weapon(name,rarity,level_req,atk,potential_id,variance,base_affix_slots,drop_info,pb_gauge_build,icon)
-	values('Tzvia',2,4,195,(select id from potential where name='Indomitable Unit'),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
+	values('Tzvia',2,4,195,(select id from potential where name='Indomitable Unit' limit 1),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
 insert into weapon(name,rarity,level_req,atk,potential_id,variance,base_affix_slots,drop_info,pb_gauge_build,icon)
-	values('Primm',1,1,200,(select id from potential where name='Recycler Unit'),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
+	values('Primm',1,1,200,(select id from potential where name='Recycler Unit' limit 1),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
 	
-insert into potential_data(potential_id,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
-	values((select id from potential where name='Recycler Unit'),1,1.18,1.18,1.18,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0);
-insert into potential_data(potential_id,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
-	values((select id from potential where name='Recycler Unit'),2,1.20,1.20,1.20,0,0,0,0,0,0,0,0,0,0,0,0,0,20,0);
-insert into potential_data(potential_id,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
-	values((select id from potential where name='Indomitable Unit'),1,1.18,1.18,1.18,0,0,0,0,0,0,1.10,0,0,0,0,0,0,10,0);
+insert into potential_data(potential_id,name,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
+	values((select id from potential where name='Recycler Unit' limit 1),'Recycler Unit Lv.1',1,1.18,1.18,1.18,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0);
+insert into potential_data(potential_id,name,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
+	values((select id from potential where name='Recycler Unit' limit 1),'Recycler Unit Lv.2',2,1.20,1.20,1.20,0,0,0,0,0,0,0,0,0,0,0,0,0,20,0);
+insert into potential_data(potential_id,name,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
+	values((select id from potential where name='Indomitable Unit' limit 1),'Indomitable Unit Lv.1',1,1.18,1.18,1.18,0,0,0,0,0,0,1.10,0,0,0,0,0,0,10,0);
 	
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Sword'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Sword' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Spear'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Spear' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wired Lance'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Wired Lance' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Dagger'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Twin Dagger' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Double Saber'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Double Saber' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Knuckles'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Knuckles' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Assault Rifle'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Assault Rifle' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Launcher'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Launcher' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Machine Guns'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Twin Machine Guns' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Rod'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Rod' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Talis'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Talis' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wand'),(select id from weapon where name='Primm'),0,0);
+	values((select id from weapon_type where name='Wand' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Sword'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Sword' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Spear'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Spear' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wired Lance'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Wired Lance' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Dagger'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Twin Dagger' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Double Saber'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Double Saber' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Knuckles'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Knuckles' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Assault Rifle'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Assault Rifle' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Launcher'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Launcher' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Machine Guns'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Twin Machine Guns' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Rod'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Rod' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Talis'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Talis' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wand'),(select id from weapon where name='Tzvia'),0,0);
+	values((select id from weapon_type where name='Wand' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
 	
 	
 insert into roles(name)
@@ -154,14 +155,14 @@ insert into roles(name)
 	values('Guest');
 	
 insert into users(username,email,password_hash,created_on,roles_id,avatar)
-	values('sigonasr2','sigonasr2@gmail.com','ABCDEFG','2021-07-13 04:30+00',(select id from roles where name='Administrator'),'');
+	values('sigonasr2','sigonasr2@gmail.com','ABCDEFG','2021-07-13 04:30+00',(select id from roles where name='Administrator' limit 1),'');
 insert into users(username,email,password_hash,created_on,roles_id,avatar)
-	values('sigonasr3','sigonasr3@gmail.com','ABCDEF','2021-07-14 05:30+00',(select id from roles where name='Editor'),'');
+	values('sigonasr3','sigonasr3@gmail.com','ABCDEF','2021-07-14 05:30+00',(select id from roles where name='Editor' limit 1),'');
 	
 insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice)
-	values((select id from users where username='sigonasr2'),'sigonasr2','Test Build',(select id from class where name='Ranger'),(select id from class where name='Force'),'2021-07-13 04:30+00','2021-07-13 04:30+00',5,'<DATA STRING>',0);
+	values((select id from users where username='sigonasr2' limit 1),'sigonasr2','Test Build',(select id from class where name='Ranger' limit 1),(select id from class where name='Force' limit 1),'2021-07-13 04:30+00','2021-07-13 04:30+00',5,'<DATA STRING>',0);
 insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice)
-	values((select id from users where username='sigonasr3'),'sigonasr3','Test Build2',(select id from class where name='Techter'),(select id from class where name='Fighter'),'2021-07-13 06:30+00','2021-07-13 07:30+00',27,'<DATA STRING>',0);
+	values((select id from users where username='sigonasr3' limit 1),'sigonasr3','Test Build2',(select id from class where name='Techter' limit 1),(select id from class where name='Fighter' limit 1),'2021-07-13 06:30+00','2021-07-13 07:30+00',27,'<DATA STRING>',0);
 	
 insert into skill_type(name)
 	values('Weapon');
@@ -169,30 +170,30 @@ insert into skill_type(name)
 	values('Armor');
 	
 insert into skill(name,skill_type_id,icon)
-	values('Fixa Attack',(select id from skill_type where name='Weapon'),'/icons/UINGSItemPresetAbility.png');
+	values('Fixa Attack',(select id from skill_type where name='Weapon' limit 1),'/icons/UINGSItemPresetAbility.png');
 insert into skill(name,skill_type_id,icon)
-	values('Fixa Guard',(select id from skill_type where name='Armor'),'/icons/UINGSItemPresetAbility.png');
+	values('Fixa Guard',(select id from skill_type where name='Armor' limit 1),'/icons/UINGSItemPresetAbility.png');
 insert into skill(name,skill_type_id,icon)
-	values('Fixa Termina',(select id from skill_type where name='Weapon'),'/icons/UINGSItemPresetAbility.png');
+	values('Fixa Termina',(select id from skill_type where name='Weapon' limit 1),'/icons/UINGSItemPresetAbility.png');
 	
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Attack'),1,0,1.02,1.02,1.02,0,0,0,0,0,0,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Attack'),2,0,1.03,1.03,1.03,0,0,0,0,0,0,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Attack'),3,0,1.04,1.04,1.04,0,0,0,0,0,0,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Guard'),1,0,0,0,0,0,0,0,0,0,1.01,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Guard'),2,0,0,0,0,0,0,0,0,0,1.02,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Guard'),3,0,0,0,0,0,0,0,0,0,1.03,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Termina'),1,0,0,0,0,0,1.05,0,0,0,0,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Termina'),2,0,0,0,0,0,1.08,0,0,0,0,0,0);
-insert into skill_data(skill_id,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
-	values((select id from skill where name='Fixa Termina'),3,0,0,0,0,0,1.10,0,0,0,0,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Attack' limit 1),'Fixa Attack Lv.1',1,0,1.02,1.02,1.02,0,0,0,0,0,0,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Attack' limit 1),'Fixa Attack Lv.2',2,0,1.03,1.03,1.03,0,0,0,0,0,0,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Attack' limit 1),'Fixa Attack Lv.3',3,0,1.04,1.04,1.04,0,0,0,0,0,0,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Guard' limit 1),'Fixa Guard Lv.1',1,0,0,0,0,0,0,0,0,0,1.01,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Guard' limit 1),'Fixa Guard Lv.2',2,0,0,0,0,0,0,0,0,0,1.02,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Guard' limit 1),'Fixa Guard Lv.3',3,0,0,0,0,0,0,0,0,0,1.03,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Termina' limit 1),'Fixa Termina Lv.1',1,0,0,0,0,0,1.05,0,0,0,0,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Termina' limit 1),'Fixa Termina Lv.2',2,0,0,0,0,0,1.08,0,0,0,0,0,0);
+insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
+	values((select id from skill where name='Fixa Termina' limit 1),'Fixa Termina Lv.3',3,0,0,0,0,0,1.10,0,0,0,0,0,0);
 	
 insert into augment_type(name,icon)
 	values('Stamina','');
@@ -204,29 +205,29 @@ insert into augment_type(name,icon)
 	values('Precision','');
 
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Stamina'),1,0,5,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0);
+	values((select id from augment_type where name='Stamina' limit 1),1,0,5,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Stamina'),2,0,10,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
+	values((select id from augment_type where name='Stamina' limit 1),2,0,10,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Stamina'),3,0,15,0,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,5,0,0,0);
+	values((select id from augment_type where name='Stamina' limit 1),3,0,15,0,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,5,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Spirit'),1,0,0,3,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,2,0,0,0);
+	values((select id from augment_type where name='Spirit' limit 1),1,0,0,3,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,2,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Spirit'),2,0,0,4,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0);
+	values((select id from augment_type where name='Spirit' limit 1),2,0,0,4,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Spirit'),3,0,0,5,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,4,0,0,0);
+	values((select id from augment_type where name='Spirit' limit 1),3,0,0,5,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,4,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Might'),1,0,0,0,1.01,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
+	values((select id from augment_type where name='Might' limit 1),1,0,0,0,1.01,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Might'),2,0,0,0,1.015,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0);
+	values((select id from augment_type where name='Might' limit 1),2,0,0,0,1.015,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Might'),3,0,0,0,1.02,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0);
+	values((select id from augment_type where name='Might' limit 1),3,0,0,0,1.02,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Precision'),1,0,0,0,0,1.01,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
+	values((select id from augment_type where name='Precision' limit 1),1,0,0,0,0,1.01,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Precision'),2,0,0,0,0,1.015,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0);
+	values((select id from augment_type where name='Precision' limit 1),2,0,0,0,0,1.015,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0);
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Precision'),3,0,0,0,0,1.02,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0);
+	values((select id from augment_type where name='Precision' limit 1),3,0,0,0,0,1.02,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0);
 	
 insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,icon,popularity,editors_choice)
 	values('Primm Armor',1,1,8,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,'/icons/20M6Z7t.png',0,0);
@@ -234,3 +235,8 @@ insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_r
 	values('Tzvia Armor',2,1,9,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.2,0,'/icons/F0t58xP.png',0,0);
 insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,icon,popularity,editors_choice)
 	values('Theseus Armor',3,5,10,10,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.1,0,'/icons/uldt9lR.png',0,0);
+
+insert into database_audit(action,table_name,row_name,row_id,old_value,new_value,date,users_id)
+	values('INSERT','augment','crit_rate',4,'','0.15','2018-07-16 03:30+00',(select id from users where username='sigonasr2' limit 1));
+insert into database_audit(action,table_name,row_name,row_id,old_value,new_value,date,users_id)
+	values('UPDATE','skill_data','mel_dmg',1,'0.01','0','2018-07-17 19:45+00',(select id from users where username='sigonasr3' limit 1));
