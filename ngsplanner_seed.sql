@@ -1,3 +1,4 @@
+delete from database_audit;
 delete from food_mult;
 delete from food;
 delete from armor;
@@ -17,7 +18,6 @@ delete from weapon;
 delete from weapon_type;
 delete from class;
 delete from potential;
-delete from database_audit;
 
 insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery)
 	values(0,1,0,1,1,1,1,1,1);
@@ -64,7 +64,7 @@ insert into potential(name,icon) values('Endurance Unit','/icons/NGSUIItemPotent
 insert into class_level_data(class_id,name,level,hp,atk,def)
 	values((SELECT id from class WHERE name='Hunter' limit 1),'Hunter Lv.1',1,300,450,304);
 insert into class_level_data(class_id,name,level,hp,atk,def)
-	values((SELECT id from class WHERE name='Hunter' limit 1),'Hunter Lv.1',2,303,459,309);
+	values((SELECT id from class WHERE name='Hunter' limit 1),'Hunter Lv.2',2,303,459,309);
 insert into class_level_data(class_id,name,level,hp,atk,def)
 	values((SELECT id from class WHERE name='Fighter' limit 1),'Fighter Lv.1',1,280,454,301);
 insert into class_level_data(class_id,name,level,hp,atk,def)
