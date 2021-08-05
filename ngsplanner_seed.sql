@@ -1,3 +1,5 @@
+delete from photon_art;
+delete from enemy_data;
 delete from database_audit;
 delete from food_mult;
 delete from food;
