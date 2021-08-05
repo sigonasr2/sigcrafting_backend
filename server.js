@@ -131,6 +131,18 @@ const ENDPOINTDATA=[
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
+		endpoint:"class_skill",
+		requiredfields:["name","class_id"],
+		optionalfields:["icon","description"],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"class_skill_data",
+		requiredfields:["name","class_skill_id","level"],
+		optionalfields:["dependency","effect","duration","cooldown","damage_taken","pa_potency","conditional_buff","pp_recovery","property","all_damage_buff","active_pp_recovery","status_ailment_accum","status_ailment_duration","pp_consumption","max_hp_decrease","natural_pp_recovery","added_pp","pb_gauge_fortification"],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
 		endpoint:"augment",
 		requiredfields:["augment_type_id","name"],
 		optionalfields:["variance","hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","affix_success_rate","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","popularity","editors_choice"],
