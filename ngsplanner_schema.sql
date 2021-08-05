@@ -267,6 +267,39 @@ CREATE TABLE "enemy_data" (
   "atk" int
 );
 
+CREATE TABLE "class_skill" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "name" text,
+  "class_id" int,
+  "icon" text,
+  "description" text
+);
+
+CREATE TABLE "class_skill_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "name" text,
+  "class_skill_id" int,
+  "dependency" text,
+  "level" int,
+  "effect" text,
+  "duration" int,
+  "cooldown" int,
+  "damage_taken" float,
+  "pa_potency" float,
+  "conditional_buff" boolean,
+  "pp_recovery" float,
+  "property" text,
+  "all_damage_buff" float,
+  "active_pp_recovery" float,
+  "status_ailment_accum" float,
+  "status_ailment_duration" float,
+  "pp_consumption" float,
+  "max_hp_decrease" float,
+  "natural_pp_recovery" float,
+  "added_pp" int,
+  "pb_gauge_fortification" float
+);
+
 ALTER TABLE "class_weapon_type_data" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
 
 ALTER TABLE "class_level_data" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
@@ -298,3 +331,7 @@ ALTER TABLE "augment" ADD FOREIGN KEY ("augment_type_id") REFERENCES "augment_ty
 ALTER TABLE "database_audit" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
 ALTER TABLE "photon_art" ADD FOREIGN KEY ("weapon_type_id") REFERENCES "weapon_type" ("id");
+
+ALTER TABLE "class_skill_data" ADD FOREIGN KEY ("class_skill_id") REFERENCES "class_skill" ("id");
+
+ALTER TABLE "class_skill" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
