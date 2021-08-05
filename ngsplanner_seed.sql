@@ -240,3 +240,17 @@ insert into database_audit(action,table_name,row_name,row_id,old_value,new_value
 	values('INSERT','augment','crit_rate',4,'','0.15','2018-07-16 03:30+00',(select id from users where username='sigonasr2' limit 1));
 insert into database_audit(action,table_name,row_name,row_id,old_value,new_value,date,users_id)
 	values('UPDATE','skill_data','mel_dmg',1,'0.01','0','2018-07-17 19:45+00',(select id from users where username='sigonasr3' limit 1));
+	
+insert into weapon_skill(name,weapon_type_id,potency,power_distribution,pp,frames,dps,description,skill_dependency)
+	values('Normal Attack Lv1',(select id from weapon_type where name='Twin Dagger' limit 1),100,0.45,2,20,270,'');
+insert into weapon_skill(name,weapon_type_id,potency,power_distribution,pp,frames,dps,description,skill_dependency)
+	values('Spin Counter',(select id from weapon_type where name='Twin Dagger' limit 1),100,3,8,38,521,'');
+	
+insert into enemy_data(level,def,atk)
+	values(1,450,900);
+insert into enemy_data(level,def,atk)
+	values(2,450,918);
+insert into enemy_data(level,def,atk)
+	values(3,467,935);
+insert into enemy_data(level,def,atk)
+	values(4,467,953);

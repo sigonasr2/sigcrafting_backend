@@ -248,6 +248,26 @@ CREATE TABLE "augment_type" (
   "icon" text
 );
 
+CREATE TABLE "weapon_skill" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "name" text,
+  "weapon_type_id" int,
+  "potency" int,
+  "power_distribution" float,
+  "pp" int,
+  "frames" int,
+  "dps" int,
+  "description" text,
+  "skill_dependency" text
+);
+
+CREATE TABLE "enemy_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "level" int,
+  "def" int,
+  "atk" int
+);
+
 ALTER TABLE "class_weapon_type_data" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
 
 ALTER TABLE "class_level_data" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
@@ -277,3 +297,5 @@ ALTER TABLE "weapon_existence_data" ADD FOREIGN KEY ("weapon_type_id") REFERENCE
 ALTER TABLE "augment" ADD FOREIGN KEY ("augment_type_id") REFERENCES "augment_type" ("id");
 
 ALTER TABLE "database_audit" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
+
+ALTER TABLE "weapon_skill" ADD FOREIGN KEY ("weapon_type_id") REFERENCES "weapon_type" ("id");
