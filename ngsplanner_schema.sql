@@ -248,7 +248,7 @@ CREATE TABLE "augment_type" (
   "icon" text
 );
 
-CREATE TABLE "weapon_skill" (
+CREATE TABLE "photon_art" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "name" text,
   "weapon_type_id" int,
@@ -257,8 +257,7 @@ CREATE TABLE "weapon_skill" (
   "pp" int,
   "frames" int,
   "dps" int,
-  "description" text,
-  "skill_dependency" text
+  "property" int
 );
 
 CREATE TABLE "enemy_data" (
@@ -298,4 +297,4 @@ ALTER TABLE "augment" ADD FOREIGN KEY ("augment_type_id") REFERENCES "augment_ty
 
 ALTER TABLE "database_audit" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
-ALTER TABLE "weapon_skill" ADD FOREIGN KEY ("weapon_type_id") REFERENCES "weapon_type" ("id");
+ALTER TABLE "photon_art" ADD FOREIGN KEY ("weapon_type_id") REFERENCES "weapon_type" ("id");

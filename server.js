@@ -83,6 +83,12 @@ const ENDPOINTDATA=[
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
+		endpoint:"photon_art",
+		requiredfields:["name","weapon_type_id","potency","dps"],
+		optionalfields:["power_distribution","pp","frames"],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
 		endpoint:"armor",
 		requiredfields:["name","rarity","level_req","def"],
 		optionalfields:["hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","icon","popularity","editors_choice"],
@@ -134,6 +140,12 @@ const ENDPOINTDATA=[
 		endpoint:"augment_type",
 		requiredfields:["name"],
 		optionalfields:["icon"],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"enemy_data",
+		requiredfields:["level","def","atk"],
+		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
