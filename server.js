@@ -258,7 +258,7 @@ app.post("/databases/backup",(req,res)=>{
 })
 
 function CreateDynamicEndpoints() {
-	ENDPOINTDATA.map((endpoint)=>{
+	ENDPOINTDATA.forEach((endpoint)=>{
 		app.get("/"+endpoint.endpoint,(req,res)=>{
 			if (endpoint.requiredfields.includes("name")) {
 				db.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
@@ -429,52 +429,24 @@ function CleanUp(arr,vals){
 	})
 }
 
-app.get('/data',(req,res)=>{
+app.get('/data',async(req,res)=>{
 	var finalresult = {}
-	db.query('select * from potential_data inner join potential on potential_data.potential_id=potential.id')
-	.then((data)=>{
-		finalresult["potential_data"]=data.rows
-		return db.query('select *,weapon.name as weapon,potential.name as potential,weapon_type.name as weapon_type from weapon_existence_data inner join weapon on weapon_existence_data.weapon_id=weapon.id inner join potential on potential.id=weapon.potential_id inner join weapon_type on weapon_type.id=weapon_existence_data.weapon_type_id')
-	})
-	.then((data)=>{
-		finalresult["weapon_existence_data"]=CleanUp(data.rows,["id","name","potential_id","weapon_type_id","weapon_id"])
-		return db.query('select *,weapon_type.name as weapon_type,class.name as class from class_weapon_type_data inner join weapon_type on weapon_type.id=class_weapon_type_data.weapon_type_id inner join class on class.id=class_weapon_type_data.class_id')
-	})
-	.then((data)=>{
-		finalresult["class_weapon_type_data"]=CleanUp(data.rows,["id","name","class_id","weapon_type_id"])
-		return db.query('select *,class.name as class from class_level_data inner join class on class.id=class_level_data.class_id')
-	})
-	.then((data)=>{
-		finalresult["class_level_data"]=CleanUp(data.rows,["id","class_id","name"])
-		return db.query('select *,class.name as class2 from (select *,class.name as class1 from builds inner join users on users.id=builds.users_id inner join class on class.id=builds.class1)t inner join class on class.id=t.class2')
-	})
-	.then((data)=>{
-		finalresult["builds"]=CleanUp(data.rows,["id","users_id","username","email","password_hash","created_on","roles_id","name"])
-		return db.query('select *,skill.name as skill_name,skill_type.name as skill_type_name from skill_data inner join skill on skill.id=skill_data.skill_id inner join skill_type on skill.skill_type_id=skill_type.id')
-	})
-	.then((data)=>{
-		finalresult["skill_data"]=CleanUp(data.rows,["id","name","skill_type_id","skill_id"])
-		return db.query('select *,augment_type.name as augment_type from augment inner join augment_type on augment_type.id=augment.augment_type_id')
-	})
-	.then((data)=>{
-		finalresult["augment"]=CleanUp(data.rows,["id","name","augment_type_id"])
-		return db.query('select * from armor')
-	})
-	.then((data)=>{
-		finalresult["armor"]=data.rows
-		return db.query('select * from food')
-	})
-	.then((data)=>{
-		finalresult["food"]=data.rows
-		return db.query('select * from food_mult')
-	})
-	.then((data)=>{
-		finalresult["food_mult"]=data.rows
-		res.status(200).json(finalresult)
-	})
-	.catch((err)=>{
-		res.status(500).send(err.message);
-	})
+	var promises = []
+	for (var endpoint of ENDPOINTDATA) {
+		if (endpoint.requiredfields.includes("name")) {
+			await db.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+			.then((data)=>{
+				finalresult[endpoint.endpoint]={}
+				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
+			})
+		} else {
+			await db.query('select * from '+endpoint.endpoint+" order by id desc")
+			.then((data)=>{
+				finalresult[endpoint.endpoint]=data.rows
+			})
+		}
+	}
+	res.status(200).json(finalresult)
 })
 
 CreateDynamicEndpoints()
