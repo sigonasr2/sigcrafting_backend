@@ -54,6 +54,15 @@ new Pool({
   port: 5432,
 })
 
+const db3 = 
+new Pool({
+  user: 'postgres',
+  password: '',
+  host: 'postgres',
+  database: '',
+  port: 5432,
+})
+
 const ENDPOINTDATA=[
 	{
 		endpoint:"class",
@@ -202,9 +211,46 @@ const ENDPOINTDATA=[
 ]
 
 app.get("/databases",(req,res)=>{
-	db.query('select * from pg_database where datname like \'ngsplanner%\' limit 100')
+	db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname limit 100')
 	.then((data)=>{
 		res.status(200).json(data.rows)
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
+})
+
+app.post("/databases/testtolive",(req,res)=>{
+	db3.query('drop database ngsplanner')
+	.then(()=>{
+		return db3.query('create database ngsplanner with template ngsplanner2')
+	})
+	.then(()=>{
+		res.status(200).send("Done!")
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
+})
+
+app.post("/databases/livetotest",(req,res)=>{
+	db3.query('drop database ngsplanner2')
+	.then(()=>{
+		return db3.query('create database ngsplanner2 with template ngsplanner')
+	})
+	.then(()=>{
+		res.status(200).send("Done!")
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
+})
+
+app.post("/databases/backup",(req,res)=>{
+	var date = new Date()
+	db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
+	.then(()=>{
+		res.status(200).send("Done!")
 	})
 	.catch((err)=>{
 		res.status(500).send(err.message)
