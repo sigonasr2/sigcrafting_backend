@@ -201,6 +201,16 @@ const ENDPOINTDATA=[
 	}
 ]
 
+app.get("/"+databases,(req,res)=>{
+	db.query('select * from pg_database where datname like \'ngsplanner%\' limit 100')
+	.then((data)=>{
+		res.status(200).json(data.rows)
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
+})
+
 function CreateDynamicEndpoints() {
 	ENDPOINTDATA.map((endpoint)=>{
 		app.get("/"+endpoint.endpoint,(req,res)=>{
