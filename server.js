@@ -45,6 +45,15 @@ new Pool({
   port: 5432,
 })
 
+const db2 = 
+new Pool({
+  user: 'postgres',
+  password: '',
+  host: 'postgres',
+  database: 'ngsplanner2',
+  port: 5432,
+})
+
 const ENDPOINTDATA=[
 	{
 		endpoint:"class",
@@ -262,6 +271,86 @@ function CreateDynamicEndpoints() {
 		app.delete("/"+endpoint.endpoint,(req,res)=>{
 			if (req.body.id) {
 				db.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
+				.then((data)=>{
+					res.status(200).json(data.rows)
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			} else {
+				res.status(300).send("Invalid query!")
+			}
+		})
+		
+		
+		app.get("/test/"+endpoint.endpoint,(req,res)=>{
+			if (endpoint.requiredfields.includes("name")) {
+				db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+				.then((data)=>{
+					res.status(200).json({fields:data.fields,rows:data.rows})
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			} else {
+				db2.query('select * from '+endpoint.endpoint+" order by id desc")
+				.then((data)=>{
+					res.status(200).json({fields:data.fields,rows:data.rows})
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			}
+		})
+		
+		
+		app.post("/test/"+endpoint.endpoint,(req,res)=>{
+			
+			var allExist=true
+			endpoint.requiredfields.forEach((field)=>{
+				if (!(field in req.body)) {
+					allExist=false;
+				}
+			})
+			if (!allExist) {
+				res.status(300).send("Required fields are: "+endpoint.requiredfields.filter((field)=>!(field in req.body)).join(','))
+				return
+			}
+			
+			var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+			//console.log(combinedfields)
+			var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+			
+			db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+			.then((data)=>{
+				res.status(200).json(data.rows)
+			})
+			.catch((err)=>{
+				res.status(500).send(err.message)
+			})
+		})
+		
+		app.patch("/test/"+endpoint.endpoint,(req,res)=>{
+			if (req.body.id) {
+				var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+				//console.log(combinedfields)
+				var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+				
+				db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
+				.then((data)=>{
+					res.status(200).json(data.rows)
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			} else {
+				res.status(300).send("Invalid query!")
+			}
+		})
+		
+		app.delete("/test/"+endpoint.endpoint,(req,res)=>{
+			if (req.body.id) {
+				db2.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
 				.then((data)=>{
 					res.status(200).json(data.rows)
 				})
