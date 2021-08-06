@@ -201,7 +201,7 @@ const ENDPOINTDATA=[
 	}
 ]
 
-app.get("/"+databases,(req,res)=>{
+app.get("/databases",(req,res)=>{
 	db.query('select * from pg_database where datname like \'ngsplanner%\' limit 100')
 	.then((data)=>{
 		res.status(200).json(data.rows)
