@@ -36,7 +36,7 @@ let allowCrossDomain = function(req, res, next) {
   }
   app.use(allowCrossDomain);
 
-const db = 
+var db = 
 new Pool({
   user: 'postgres',
   password: '',
@@ -45,7 +45,7 @@ new Pool({
   port: 5432,
 })
 
-const db2 = 
+var db2 = 
 new Pool({
   user: 'postgres',
   password: '',
@@ -54,7 +54,7 @@ new Pool({
   port: 5432,
 })
 
-const db3 = 
+var db3 = 
 new Pool({
   user: 'postgres',
   password: '',
@@ -221,24 +221,63 @@ app.get("/databases",(req,res)=>{
 })
 
 app.post("/databases/testtolive",(req,res)=>{
-	db3.query('drop database ngsplanner')
+	db.end(()=>{})
+	db2.end(()=>{})
+	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+	.then(()=>{
+		return db3.query('drop database ngsplanner')
+	})
 	.then(()=>{
 		return db3.query('create database ngsplanner with template ngsplanner2')
 	})
 	.then(()=>{
+		db = new Pool({
+		  user: 'postgres',
+		  password: '',
+		  host: 'postgres',
+		  database: 'ngsplanner',
+		  port: 5432,
+		})
+		db2 = new Pool({
+		  user: 'postgres',
+		  password: '',
+		  host: 'postgres',
+		  database: 'ngsplanner2',
+		  port: 5432,
+		})
 		res.status(200).send("Done!")
 	})
 	.catch((err)=>{
+		console.log(err.message)
 		res.status(500).send(err.message)
 	})
 })
 
 app.post("/databases/livetotest",(req,res)=>{
-	db3.query('drop database ngsplanner2')
+	db.end(()=>{})
+	db2.end(()=>{})
+	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+	.then(()=>{
+		return db3.query('drop database ngsplanner2')
+	})
 	.then(()=>{
 		return db3.query('create database ngsplanner2 with template ngsplanner')
 	})
 	.then(()=>{
+		db = new Pool({
+		  user: 'postgres',
+		  password: '',
+		  host: 'postgres',
+		  database: 'ngsplanner',
+		  port: 5432,
+		})
+		db2 = new Pool({
+		  user: 'postgres',
+		  password: '',
+		  host: 'postgres',
+		  database: 'ngsplanner2',
+		  port: 5432,
+		})
 		res.status(200).send("Done!")
 	})
 	.catch((err)=>{
@@ -247,9 +286,17 @@ app.post("/databases/livetotest",(req,res)=>{
 })
 
 app.post("/databases/backup",(req,res)=>{
+	db.end(()=>{})
 	var date = new Date()
 	db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
 	.then(()=>{
+		db = new Pool({
+		  user: 'postgres',
+		  password: '',
+		  host: 'postgres',
+		  database: 'ngsplanner',
+		  port: 5432,
+		})
 		res.status(200).send("Done!")
 	})
 	.catch((err)=>{
@@ -447,6 +494,31 @@ app.get('/data',async(req,res)=>{
 		}
 	}
 	res.status(200).json(finalresult)
+})
+
+app.get('/test/data',async(req,res)=>{
+	var finalresult = {}
+	var promises = []
+	for (var endpoint of ENDPOINTDATA) {
+		if (endpoint.requiredfields.includes("name")) {
+			await db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+			.then((data)=>{
+				finalresult[endpoint.endpoint]={}
+				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
+			})
+		} else {
+			await db2.query('select * from '+endpoint.endpoint+" order by id desc")
+			.then((data)=>{
+				finalresult[endpoint.endpoint]=data.rows
+			})
+		}
+	}
+	res.status(200).json(finalresult)
+})
+
+//Generates our table schema:
+ENDPOINTDATA.forEach((endpoint)=>{
+	console.log(endpoint.endpoint+":\n\t"+endpoint.requiredfields.join('\t')+(endpoint.optionalfields.length>0?"\t":"")+endpoint.optionalfields.join("\t"))
 })
 
 CreateDynamicEndpoints()
