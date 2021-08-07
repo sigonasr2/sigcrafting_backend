@@ -366,7 +366,6 @@ function CreateDynamicEndpoints() {
 		})
 		
 		app.post("/"+endpoint.endpoint,async(req,res)=>{
-			
 			var allExist=true
 			endpoint.requiredfields.forEach((field)=>{
 				if (!(field in req.body)) {
@@ -566,6 +565,32 @@ app.get('/test/data',async(req,res)=>{
 				finalresult[endpoint.endpoint]=data.rows
 			})
 		}
+	}
+	res.status(200).json(finalresult)
+})
+
+app.get('/dataid',async(req,res)=>{
+	var finalresult = {}
+	var promises = []
+	for (var endpoint of ENDPOINTDATA) {
+		await db.query('select * from '+endpoint.endpoint+' order by id asc')
+		.then((data)=>{
+			finalresult[endpoint.endpoint]={}
+			data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
+		})
+	}
+	res.status(200).json(finalresult)
+})
+
+app.get('/test/dataid',async(req,res)=>{
+	var finalresult = {}
+	var promises = []
+	for (var endpoint of ENDPOINTDATA) {
+		await db2.query('select * from '+endpoint.endpoint+' order by id asc')
+		.then((data)=>{
+			finalresult[endpoint.endpoint]={}
+			data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
+		})
 	}
 	res.status(200).json(finalresult)
 })
