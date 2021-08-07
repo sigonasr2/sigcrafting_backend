@@ -211,13 +211,49 @@ const ENDPOINTDATA=[
 ]
 
 app.get("/databases",(req,res)=>{
-	db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname limit 100')
+	db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname desc limit 100')
 	.then((data)=>{
 		res.status(200).json(data.rows)
 	})
 	.catch((err)=>{
 		res.status(500).send(err.message)
 	})
+})
+
+app.post("/databases/restorefrombackup",(req,res)=>{
+	if (req.body.database) {
+		db3.query('select * from pg_database where datname=$1',[req.body.database])
+		.then((data)=>{
+			if (data.rows.length>0) {
+				db.end(()=>{})
+				return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
+			} else {
+				throw "Could not find requested database "+req.body.database
+			}
+		})
+		.then(()=>{
+			return db3.query('drop database ngsplanner') 
+		})
+		.then(()=>{
+			return db3.query('create database ngsplanner with template '+req.body.database)
+		})
+		.then(()=>{
+			db = new Pool({
+			  user: 'postgres',
+			  password: '',
+			  host: 'postgres',
+			  database: 'ngsplanner',
+			  port: 5432,
+			})
+			res.status(200).send("Done!")
+		})
+		.catch((err)=>{
+			console.log(err.message)
+			res.status(500).send(err.message)
+		})
+	} else {
+		res.status(500).send("Invalid data!")
+	}
 })
 
 app.post("/databases/testtolive",(req,res)=>{
@@ -276,7 +312,7 @@ app.post("/databases/livetotest",(req,res)=>{
 		  password: '',
 		  host: 'postgres',
 		  database: 'ngsplanner2',
-		  port: 5432,
+		  port: 5432, 
 		})
 		res.status(200).send("Done!")
 	})
@@ -288,7 +324,10 @@ app.post("/databases/livetotest",(req,res)=>{
 app.post("/databases/backup",(req,res)=>{
 	db.end(()=>{})
 	var date = new Date()
-	db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
+	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
+	.then(()=>{
+		return db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
+	})
 	.then(()=>{
 		db = new Pool({
 		  user: 'postgres',
@@ -326,8 +365,7 @@ function CreateDynamicEndpoints() {
 			}
 		})
 		
-		
-		app.post("/"+endpoint.endpoint,(req,res)=>{
+		app.post("/"+endpoint.endpoint,async(req,res)=>{
 			
 			var allExist=true
 			endpoint.requiredfields.forEach((field)=>{
@@ -343,14 +381,30 @@ function CreateDynamicEndpoints() {
 			var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
 			//console.log(combinedfields)
 			var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
-			
-			db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
-			.then((data)=>{
-				res.status(200).json(data.rows)
-			})
-			.catch((err)=>{
-				res.status(500).send(err.message)
-			})
+			var requiresInsert=true
+			if (endpoint.requiredfields.includes("name")) {
+				await db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+				.then((data)=>{
+					if (data.rows.length===0) {
+						requiresInsert=true
+					} else {
+						requiresInsert=false
+						res.status(200).json(data.rows)
+					}
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			}
+			if (requiresInsert) {
+				db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+				.then((data)=>{
+					res.status(200).json(data.rows)
+				})
+				.catch((err)=>{
+					res.status(500).send(err.message)
+				})
+			}
 		})
 		
 		app.patch("/"+endpoint.endpoint,(req,res)=>{
@@ -481,7 +535,7 @@ app.get('/data',async(req,res)=>{
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
 		if (endpoint.requiredfields.includes("name")) {
-			await db.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+			await db.query('select * from (select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc)t order by id asc')
 			.then((data)=>{
 				finalresult[endpoint.endpoint]={}
 				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})

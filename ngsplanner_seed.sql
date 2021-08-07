@@ -92,7 +92,7 @@ insert into weapon(name,rarity,level_req,atk,potential_id,variance,base_affix_sl
 insert into weapon(name,rarity,level_req,atk,potential_id,variance,base_affix_slots,drop_info,pb_gauge_build,icon)
 	values('Tzvia',2,4,195,(select id from potential where name='Indomitable Unit' limit 1),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
 insert into weapon(name,rarity,level_req,atk,potential_id,variance,base_affix_slots,drop_info,pb_gauge_build,icon)
-	values('Primm',1,1,200,(select id from potential where name='Recycler Unit' limit 1),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
+	values('Cattleya',1,1,200,(select id from potential where name='Recycler Unit' limit 1),0.7,2,'Central City Item Shop, Common Drop',0,'/icons/uc1iBck.png');
 	
 insert into potential_data(potential_id,name,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
 	values((select id from potential where name='Recycler Unit' limit 1),'Recycler Unit Lv.1',1,1.18,1.18,1.18,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0);
