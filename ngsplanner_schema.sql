@@ -85,8 +85,7 @@ CREATE TABLE "weapon_type" (
 CREATE TABLE "potential" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "name" text,
-  "icon" text,
-  "description" text
+  "icon" text
 );
 
 CREATE TABLE "potential_data" (
@@ -111,7 +110,8 @@ CREATE TABLE "potential_data" (
   "panic_res" float,
   "poison_res" float,
   "battle_power_value" int,
-  "pb_gauge_build" float
+  "pb_gauge_build" float,
+  "description" text
 );
 
 CREATE TABLE "armor" (

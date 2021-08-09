@@ -63,6 +63,15 @@ new Pool({
   port: 5432,
 })
 
+var db4 = 
+new Pool({
+  user: 'postgres',
+  password: '',
+  host: 'postgres',
+  database: 'postgres',
+  port: 5432,
+})
+
 const PREFIX=""
 
 const ENDPOINTDATA=[
@@ -117,13 +126,13 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"potential",
 		requiredfields:["name"],
-		optionalfields:["icon","description"],
+		optionalfields:["icon"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"potential_data",
 		requiredfields:["potential_id","level","name"],
-		optionalfields:["mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build"],
+		optionalfields:["mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","description"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -214,7 +223,14 @@ const ENDPOINTDATA=[
 
 for (var test of ["","/test"]) {
 	app.get(PREFIX+test+"/databases",(req,res)=>{
-		db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname desc limit 100')
+		db4.query('select * from password where password=$1',[req.query.pass])
+		.then((data)=>{
+			if (data.rows.length>0) {
+				return db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname desc limit 100')	
+			} else {
+				var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+			}
+		})
 		.then((data)=>{
 			res.status(200).json(data.rows)
 		})
@@ -225,13 +241,20 @@ for (var test of ["","/test"]) {
 
 	app.post(PREFIX+test+"/databases/restorefrombackup",(req,res)=>{
 		if (req.body.database) {
-			db3.query('select * from pg_database where datname=$1',[req.body.database])
+			db4.query('select * from password where password=$1',[req.body.pass])
+			.then((data)=>{
+				if (data.rows.length>0) {
+					return db3.query('select * from pg_database where datname=$1',[req.body.database])
+				} else {
+					var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+				}
+			})
 			.then((data)=>{
 				if (data.rows.length>0) {
 					db.end(()=>{})
 					return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
 				} else {
-					throw "Could not find requested database "+req.body.database
+					var msg="Could not find requested database "+req.body.database;res.status(500).send(msg);throw msg
 				}
 			})
 			.then(()=>{
@@ -259,9 +282,16 @@ for (var test of ["","/test"]) {
 		}
 	})
 	app.post(PREFIX+test+"/databases/testtolive",(req,res)=>{
-		db.end(()=>{})
-		db2.end(()=>{})
-		db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+		db4.query('select * from password where password=$1',[req.body.pass])
+		.then((data)=>{
+			if (data.rows.length>0) {
+				db.end(()=>{})
+				db2.end(()=>{})
+				return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+			} else {
+				var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+			}
+		})
 		.then(()=>{
 			return db3.query('drop database ngsplanner')
 		})
@@ -292,9 +322,16 @@ for (var test of ["","/test"]) {
 	})
 
 	app.post(PREFIX+test+"/databases/livetotest",(req,res)=>{
-		db.end(()=>{})
-		db2.end(()=>{})
-		db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+		db4.query('select * from password where password=$1',[req.body.pass])
+		.then((data)=>{
+			if (data.rows.length>0) {
+				db.end(()=>{})
+				db2.end(()=>{})
+				return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+			} else {
+				var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+			}
+		})
 		.then(()=>{
 			return db3.query('drop database ngsplanner2')
 		})
@@ -324,9 +361,16 @@ for (var test of ["","/test"]) {
 	})
 
 	app.post(PREFIX+test+"/databases/backup",(req,res)=>{
-		db.end(()=>{})
-		var date = new Date()
-		db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
+		db4.query('select * from password where password=$1',[req.body.pass])
+		.then((data)=>{
+			if (data.rows.length>0) {
+				db.end(()=>{})
+				var date = new Date()
+				return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
+			} else {
+				var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+			}
+		})
 		.then(()=>{
 			return db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
 		})
@@ -348,178 +392,128 @@ for (var test of ["","/test"]) {
 
 function CreateDynamicEndpoints() {
 	ENDPOINTDATA.forEach((endpoint)=>{
-		app.get(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
-			if (endpoint.requiredfields.includes("name")) {
-				db.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+		for (var mydb of [db,db2]) {
+			app.get(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,(req,res)=>{
+				db4.query('select * from password where password=$1',[req.query.pass])
 				.then((data)=>{
-					res.status(200).json({fields:data.fields,rows:data.rows})
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			} else {
-				db.query('select * from '+endpoint.endpoint+" order by id desc")
-				.then((data)=>{
-					res.status(200).json({fields:data.fields,rows:data.rows})
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			}
-		})
-		
-		app.post(PREFIX+"/"+endpoint.endpoint,async(req,res)=>{
-			var allExist=true
-			endpoint.requiredfields.forEach((field)=>{
-				if (!(field in req.body)) {
-					allExist=false;
-				}
-			})
-			if (!allExist) {
-				res.status(300).send("Required fields are: "+endpoint.requiredfields.filter((field)=>!(field in req.body)).join(','))
-				return
-			}
-			
-			var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
-			//console.log(combinedfields)
-			var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
-			var requiresInsert=true
-			if (endpoint.requiredfields.includes("name")) {
-				await db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
-				.then((data)=>{
-					if (data.rows.length===0) {
-						requiresInsert=true
+					if (data.rows.length>0) {
+						if (endpoint.requiredfields.includes("name")) {
+							mydb.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+							.then((data)=>{
+								res.status(200).json({fields:data.fields,rows:data.rows})
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						} else {
+							mydb.query('select * from '+endpoint.endpoint+" order by id desc")
+							.then((data)=>{
+								res.status(200).json({fields:data.fields,rows:data.rows})
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}
 					} else {
-						requiresInsert=false
-						res.status(200).json(data.rows)
+						res.status(500).send("Could not authenticate!")
 					}
 				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			}
-			if (requiresInsert) {
-				db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
-				.then((data)=>{
-					res.status(200).json(data.rows)
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			}
-		})
-		
-		app.patch(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
-			if (req.body.id) {
-				var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
-				//console.log(combinedfields)
-				var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
-				
-				db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
-				.then((data)=>{
-					res.status(200).json(data.rows)
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			} else {
-				res.status(300).send("Invalid query!")
-			}
-		})
-		
-		app.delete(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
-			if (req.body.id) {
-				db.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
-				.then((data)=>{
-					res.status(200).json(data.rows)
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			} else {
-				res.status(300).send("Invalid query!")
-			}
-		})
-		
-		
-		app.get(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
-			if (endpoint.requiredfields.includes("name")) {
-				db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
-				.then((data)=>{
-					res.status(200).json({fields:data.fields,rows:data.rows})
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			} else {
-				db2.query('select * from '+endpoint.endpoint+" order by id desc")
-				.then((data)=>{
-					res.status(200).json({fields:data.fields,rows:data.rows})
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			}
-		})
-		
-		
-		app.post(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
+			})
 			
-			var allExist=true
-			endpoint.requiredfields.forEach((field)=>{
-				if (!(field in req.body)) {
-					allExist=false;
+			app.post(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,async(req,res)=>{
+				db4.query('select * from password where password=$1',[req.body.pass])
+				.then(async(data)=>{
+					if (data.rows.length>0) {
+						var allExist=true
+						endpoint.requiredfields.forEach((field)=>{
+							if (!(field in req.body)) {
+								allExist=false;
+							}
+						})
+						if (!allExist) {
+							res.status(300).send("Required fields are: "+endpoint.requiredfields.filter((field)=>!(field in req.body)).join(','))
+							return
+						}
+						
+						var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+						//console.log(combinedfields)
+						var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+						var requiresInsert=true
+						if (endpoint.requiredfields.includes("name")) {
+							await mydb.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							.then((data)=>{
+								if (data.rows.length===0) {
+									requiresInsert=true
+								} else {
+									requiresInsert=false
+									res.status(200).json(data.rows)
+								}
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}
+						if (requiresInsert) {
+							mydb.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+							.then((data)=>{
+								res.status(200).json(data.rows)
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}
+					} else {
+						res.status(500).send("Could not authenticate!")
+					}
+				})
+			})
+			
+			app.patch(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,(req,res)=>{
+				if (req.body.id) {
+					db4.query('select * from password where password=$1',[req.body.pass])
+					.then((data)=>{
+						if (data.rows.length>0) {
+							var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+							//console.log(combinedfields)
+							var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+							
+							return mydb.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
+						} else {
+							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+						}
+					})
+					.then((data)=>{
+						res.status(200).json(data.rows)
+					})
+					.catch((err)=>{
+						res.status(500).send(err.message)
+					})
+				} else {
+					res.status(300).send("Invalid query!")
 				}
 			})
-			if (!allExist) {
-				res.status(300).send("Required fields are: "+endpoint.requiredfields.filter((field)=>!(field in req.body)).join(','))
-				return
-			}
 			
-			var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
-			//console.log(combinedfields)
-			var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
-			
-			db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
-			.then((data)=>{
-				res.status(200).json(data.rows)
+			app.delete(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,(req,res)=>{
+				if (req.body.id) {
+					db4.query('select * from password where password=$1',[req.body.pass])
+					.then((data)=>{
+						if (data.rows.length>0) {
+							return mydb.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
+						} else {
+							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+						}
+					})
+					.then((data)=>{
+						res.status(200).json(data.rows)
+					})
+					.catch((err)=>{
+						res.status(500).send(err.message)
+					})
+				} else {
+					res.status(300).send("Invalid query!")
+				}
 			})
-			.catch((err)=>{
-				res.status(500).send(err.message)
-			})
-		})
-		
-		app.patch(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
-			if (req.body.id) {
-				var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
-				//console.log(combinedfields)
-				var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
-				
-				db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
-				.then((data)=>{
-					res.status(200).json(data.rows)
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			} else {
-				res.status(300).send("Invalid query!")
-			}
-		})
-		
-		app.delete(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
-			if (req.body.id) {
-				db2.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
-				.then((data)=>{
-					res.status(200).json(data.rows)
-				})
-				.catch((err)=>{
-					res.status(500).send(err.message)
-				})
-			} else {
-				res.status(300).send("Invalid query!")
-			}
-		})
+		}
 	})
 }
 
