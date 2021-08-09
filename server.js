@@ -117,7 +117,7 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"potential",
 		requiredfields:["name"],
-		optionalfields:["icon","description"]
+		optionalfields:["icon","description"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
