@@ -212,32 +212,123 @@ const ENDPOINTDATA=[
 	}
 ]
 
-app.get(PREFIX+"/databases",(req,res)=>{
-	db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname desc limit 100')
-	.then((data)=>{
-		res.status(200).json(data.rows)
-	})
-	.catch((err)=>{
-		res.status(500).send(err.message)
-	})
-})
-
-app.post(PREFIX+"/databases/restorefrombackup",(req,res)=>{
-	if (req.body.database) {
-		db3.query('select * from pg_database where datname=$1',[req.body.database])
+for (var test of ["","/test"]) {
+	app.get(PREFIX+test+"/databases",(req,res)=>{
+		db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname desc limit 100')
 		.then((data)=>{
-			if (data.rows.length>0) {
-				db.end(()=>{})
-				return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
-			} else {
-				throw "Could not find requested database "+req.body.database
-			}
+			res.status(200).json(data.rows)
+		})
+		.catch((err)=>{
+			res.status(500).send(err.message)
+		})
+	})
+
+	app.post(PREFIX+test+"/databases/restorefrombackup",(req,res)=>{
+		if (req.body.database) {
+			db3.query('select * from pg_database where datname=$1',[req.body.database])
+			.then((data)=>{
+				if (data.rows.length>0) {
+					db.end(()=>{})
+					return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
+				} else {
+					throw "Could not find requested database "+req.body.database
+				}
+			})
+			.then(()=>{
+				return db3.query('drop database ngsplanner') 
+			})
+			.then(()=>{
+				return db3.query('create database ngsplanner with template '+req.body.database)
+			})
+			.then(()=>{
+				db = new Pool({
+				  user: 'postgres',
+				  password: '',
+				  host: 'postgres',
+				  database: 'ngsplanner',
+				  port: 5432,
+				})
+				res.status(200).send("Done!")
+			})
+			.catch((err)=>{
+				console.log(err.message)
+				res.status(500).send(err.message)
+			})
+		} else {
+			res.status(500).send("Invalid data!")
+		}
+	})
+	app.post(PREFIX+test+"/databases/testtolive",(req,res)=>{
+		db.end(()=>{})
+		db2.end(()=>{})
+		db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+		.then(()=>{
+			return db3.query('drop database ngsplanner')
 		})
 		.then(()=>{
-			return db3.query('drop database ngsplanner') 
+			return db3.query('create database ngsplanner with template ngsplanner2')
 		})
 		.then(()=>{
-			return db3.query('create database ngsplanner with template '+req.body.database)
+			db = new Pool({
+			  user: 'postgres',
+			  password: '',
+			  host: 'postgres',
+			  database: 'ngsplanner',
+			  port: 5432,
+			})
+			db2 = new Pool({
+			  user: 'postgres',
+			  password: '',
+			  host: 'postgres',
+			  database: 'ngsplanner2',
+			  port: 5432,
+			})
+			res.status(200).send("Done!")
+		})
+		.catch((err)=>{
+			console.log(err.message)
+			res.status(500).send(err.message)
+		})
+	})
+
+	app.post(PREFIX+test+"/databases/livetotest",(req,res)=>{
+		db.end(()=>{})
+		db2.end(()=>{})
+		db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
+		.then(()=>{
+			return db3.query('drop database ngsplanner2')
+		})
+		.then(()=>{
+			return db3.query('create database ngsplanner2 with template ngsplanner')
+		})
+		.then(()=>{
+			db = new Pool({
+			  user: 'postgres',
+			  password: '',
+			  host: 'postgres',
+			  database: 'ngsplanner',
+			  port: 5432,
+			})
+			db2 = new Pool({
+			  user: 'postgres',
+			  password: '',
+			  host: 'postgres',
+			  database: 'ngsplanner2',
+			  port: 5432, 
+			})
+			res.status(200).send("Done!")
+		})
+		.catch((err)=>{
+			res.status(500).send(err.message)
+		})
+	})
+
+	app.post(PREFIX+test+"/databases/backup",(req,res)=>{
+		db.end(()=>{})
+		var date = new Date()
+		db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
+		.then(()=>{
+			return db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
 		})
 		.then(()=>{
 			db = new Pool({
@@ -250,100 +341,10 @@ app.post(PREFIX+"/databases/restorefrombackup",(req,res)=>{
 			res.status(200).send("Done!")
 		})
 		.catch((err)=>{
-			console.log(err.message)
 			res.status(500).send(err.message)
 		})
-	} else {
-		res.status(500).send("Invalid data!")
-	}
-})
-
-app.post(PREFIX+"/databases/testtolive",(req,res)=>{
-	db.end(()=>{})
-	db2.end(()=>{})
-	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
-	.then(()=>{
-		return db3.query('drop database ngsplanner')
 	})
-	.then(()=>{
-		return db3.query('create database ngsplanner with template ngsplanner2')
-	})
-	.then(()=>{
-		db = new Pool({
-		  user: 'postgres',
-		  password: '',
-		  host: 'postgres',
-		  database: 'ngsplanner',
-		  port: 5432,
-		})
-		db2 = new Pool({
-		  user: 'postgres',
-		  password: '',
-		  host: 'postgres',
-		  database: 'ngsplanner2',
-		  port: 5432,
-		})
-		res.status(200).send("Done!")
-	})
-	.catch((err)=>{
-		console.log(err.message)
-		res.status(500).send(err.message)
-	})
-})
-
-app.post(PREFIX+"/databases/livetotest",(req,res)=>{
-	db.end(()=>{})
-	db2.end(()=>{})
-	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
-	.then(()=>{
-		return db3.query('drop database ngsplanner2')
-	})
-	.then(()=>{
-		return db3.query('create database ngsplanner2 with template ngsplanner')
-	})
-	.then(()=>{
-		db = new Pool({
-		  user: 'postgres',
-		  password: '',
-		  host: 'postgres',
-		  database: 'ngsplanner',
-		  port: 5432,
-		})
-		db2 = new Pool({
-		  user: 'postgres',
-		  password: '',
-		  host: 'postgres',
-		  database: 'ngsplanner2',
-		  port: 5432, 
-		})
-		res.status(200).send("Done!")
-	})
-	.catch((err)=>{
-		res.status(500).send(err.message)
-	})
-})
-
-app.post(PREFIX+"/databases/backup",(req,res)=>{
-	db.end(()=>{})
-	var date = new Date()
-	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
-	.then(()=>{
-		return db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
-	})
-	.then(()=>{
-		db = new Pool({
-		  user: 'postgres',
-		  password: '',
-		  host: 'postgres',
-		  database: 'ngsplanner',
-		  port: 5432,
-		})
-		res.status(200).send("Done!")
-	})
-	.catch((err)=>{
-		res.status(500).send(err.message)
-	})
-})
+}
 
 function CreateDynamicEndpoints() {
 	ENDPOINTDATA.forEach((endpoint)=>{

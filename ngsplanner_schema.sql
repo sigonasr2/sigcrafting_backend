@@ -77,6 +77,7 @@ CREATE TABLE "weapon" (
 CREATE TABLE "weapon_type" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "name" text,
+  "shorthand" text,
   "icon" text,
   "dmg_type" int
 );
@@ -84,7 +85,8 @@ CREATE TABLE "weapon_type" (
 CREATE TABLE "potential" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "name" text,
-  "icon" text
+  "icon" text,
+  "description" text
 );
 
 CREATE TABLE "potential_data" (
@@ -239,7 +241,9 @@ CREATE TABLE "weapon_existence_data" (
   "weapon_type_id" int,
   "weapon_id" int,
   "popularity" int,
-  "editors_choice" int
+  "editors_choice" int,
+  "icon" text,
+  "special_name" text
 );
 
 CREATE TABLE "augment_type" (

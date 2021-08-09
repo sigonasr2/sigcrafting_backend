@@ -53,17 +53,17 @@ insert into weapon_type(name,icon,dmg_type) values('Rod','/icons/NGSUIItemRodMin
 insert into weapon_type(name,icon,dmg_type) values('Talis','/icons/NGSUIItemTalisMini.png',2);
 insert into weapon_type(name,icon,dmg_type) values('Wand','/icons/NGSUIItemWandMini.png',2);
 
-insert into potential(name,icon) values('Recycler Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Indomitable Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Defensive Formation','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Offensive Formation','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Bastion Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Meditation Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Mustered Might Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Dynamo Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Berserk Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Wellspring Unit','/icons/NGSUIItemPotentialAbility.png');
-insert into potential(name,icon) values('Endurance Unit','/icons/NGSUIItemPotentialAbility.png');
+insert into potential(name,icon,description) values('Recycler Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Recycler Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Indomitable Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Indomitable Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Defensive Formation','/icons/NGSUIItemPotentialAbility.png','Test description for Defensive Formation. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Offensive Formation','/icons/NGSUIItemPotentialAbility.png','Test description for Offensive Formation. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Bastion Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Bastion Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Meditation Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Meditation Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Mustered Might Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Mustered Might Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Dynamo Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Dynamo Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Berserk Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Berserk Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Wellspring Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Wellspring Unit. Provides {mel_dmg}% melee dmg');
+insert into potential(name,icon,description) values('Endurance Unit','/icons/NGSUIItemPotentialAbility.png','Test description for Endurance Unit. Provides {mel_dmg}% melee dmg');
 
 insert into class_level_data(class_id,name,level,hp,atk,def)
 	values((SELECT id from class WHERE name='Hunter' limit 1),'Hunter Lv.1',1,300,450,304);
@@ -101,54 +101,54 @@ insert into potential_data(potential_id,name,level,mel_dmg,rng_dmg,tec_dmg,crit_
 insert into potential_data(potential_id,name,level,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build)
 	values((select id from potential where name='Indomitable Unit' limit 1),'Indomitable Unit Lv.1',1,1.18,1.18,1.18,0,0,0,0,0,0,1.10,0,0,0,0,0,0,10,0);
 	
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Sword' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Spear' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wired Lance' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Dagger' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Double Saber' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Knuckles' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Assault Rifle' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Launcher' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Machine Guns' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Rod' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Talis' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wand' limit 1),(select id from weapon where name='Primm' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Sword' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Spear' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wired Lance' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Dagger' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Double Saber' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Knuckles' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Assault Rifle' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Launcher' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Twin Machine Guns' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Rod' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Talis' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
-insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice)
-	values((select id from weapon_type where name='Wand' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0);
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Sword' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Spear' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Wired Lance' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Twin Dagger' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Double Saber' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Knuckles' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Assault Rifle' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Launcher' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Twin Machine Guns' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Rod' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Talis' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Wand' limit 1),(select id from weapon where name='Primm' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Sword' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Spear' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Wired Lance' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Twin Dagger' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Double Saber' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Knuckles' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Assault Rifle' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Launcher' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Twin Machine Guns' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Rod' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Talis' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
+insert into weapon_existence_data(weapon_type_id,weapon_id,popularity,editors_choice,icon)
+	values((select id from weapon_type where name='Wand' limit 1),(select id from weapon where name='Tzvia' limit 1),0,0,'');
 	
 	
 insert into roles(name)
