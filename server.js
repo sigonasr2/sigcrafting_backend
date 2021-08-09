@@ -93,13 +93,13 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"weapon_existence_data",
 		requiredfields:["weapon_type_id","weapon_id"],
-		optionalfields:["popularity","editors_choice"],
+		optionalfields:["popularity","editors_choice","icon","special_name"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
 		endpoint:"weapon_type",
 		requiredfields:["name","dmg_type"],
-		optionalfields:["icon"],
+		optionalfields:["icon","shorthand"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -117,7 +117,7 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"potential",
 		requiredfields:["name"],
-		optionalfields:["icon"],
+		optionalfields:["icon","description"]
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
