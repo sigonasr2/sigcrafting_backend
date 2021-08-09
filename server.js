@@ -63,6 +63,8 @@ new Pool({
   port: 5432,
 })
 
+const PREFIX=""
+
 const ENDPOINTDATA=[
 	{
 		endpoint:"class",
@@ -210,7 +212,7 @@ const ENDPOINTDATA=[
 	}
 ]
 
-app.get("/databases",(req,res)=>{
+app.get(PREFIX+"/databases",(req,res)=>{
 	db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname desc limit 100')
 	.then((data)=>{
 		res.status(200).json(data.rows)
@@ -220,7 +222,7 @@ app.get("/databases",(req,res)=>{
 	})
 })
 
-app.post("/databases/restorefrombackup",(req,res)=>{
+app.post(PREFIX+"/databases/restorefrombackup",(req,res)=>{
 	if (req.body.database) {
 		db3.query('select * from pg_database where datname=$1',[req.body.database])
 		.then((data)=>{
@@ -256,7 +258,7 @@ app.post("/databases/restorefrombackup",(req,res)=>{
 	}
 })
 
-app.post("/databases/testtolive",(req,res)=>{
+app.post(PREFIX+"/databases/testtolive",(req,res)=>{
 	db.end(()=>{})
 	db2.end(()=>{})
 	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
@@ -289,7 +291,7 @@ app.post("/databases/testtolive",(req,res)=>{
 	})
 })
 
-app.post("/databases/livetotest",(req,res)=>{
+app.post(PREFIX+"/databases/livetotest",(req,res)=>{
 	db.end(()=>{})
 	db2.end(()=>{})
 	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\' or pg_stat_activity.datname=\'ngsplanner2\'')
@@ -321,7 +323,7 @@ app.post("/databases/livetotest",(req,res)=>{
 	})
 })
 
-app.post("/databases/backup",(req,res)=>{
+app.post(PREFIX+"/databases/backup",(req,res)=>{
 	db.end(()=>{})
 	var date = new Date()
 	db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
@@ -345,7 +347,7 @@ app.post("/databases/backup",(req,res)=>{
 
 function CreateDynamicEndpoints() {
 	ENDPOINTDATA.forEach((endpoint)=>{
-		app.get("/"+endpoint.endpoint,(req,res)=>{
+		app.get(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 			if (endpoint.requiredfields.includes("name")) {
 				db.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
 				.then((data)=>{
@@ -365,7 +367,7 @@ function CreateDynamicEndpoints() {
 			}
 		})
 		
-		app.post("/"+endpoint.endpoint,async(req,res)=>{
+		app.post(PREFIX+"/"+endpoint.endpoint,async(req,res)=>{
 			var allExist=true
 			endpoint.requiredfields.forEach((field)=>{
 				if (!(field in req.body)) {
@@ -406,7 +408,7 @@ function CreateDynamicEndpoints() {
 			}
 		})
 		
-		app.patch("/"+endpoint.endpoint,(req,res)=>{
+		app.patch(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 			if (req.body.id) {
 				var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
 				//console.log(combinedfields)
@@ -424,7 +426,7 @@ function CreateDynamicEndpoints() {
 			}
 		})
 		
-		app.delete("/"+endpoint.endpoint,(req,res)=>{
+		app.delete(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 			if (req.body.id) {
 				db.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
 				.then((data)=>{
@@ -439,7 +441,7 @@ function CreateDynamicEndpoints() {
 		})
 		
 		
-		app.get("/test/"+endpoint.endpoint,(req,res)=>{
+		app.get(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
 			if (endpoint.requiredfields.includes("name")) {
 				db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
 				.then((data)=>{
@@ -460,7 +462,7 @@ function CreateDynamicEndpoints() {
 		})
 		
 		
-		app.post("/test/"+endpoint.endpoint,(req,res)=>{
+		app.post(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
 			
 			var allExist=true
 			endpoint.requiredfields.forEach((field)=>{
@@ -486,7 +488,7 @@ function CreateDynamicEndpoints() {
 			})
 		})
 		
-		app.patch("/test/"+endpoint.endpoint,(req,res)=>{
+		app.patch(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
 			if (req.body.id) {
 				var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
 				//console.log(combinedfields)
@@ -504,7 +506,7 @@ function CreateDynamicEndpoints() {
 			}
 		})
 		
-		app.delete("/test/"+endpoint.endpoint,(req,res)=>{
+		app.delete(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
 			if (req.body.id) {
 				db2.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
 				.then((data)=>{
@@ -529,7 +531,7 @@ function CleanUp(arr,vals){
 	})
 }
 
-app.get('/data',async(req,res)=>{
+app.get(PREFIX+'/data',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
@@ -549,7 +551,7 @@ app.get('/data',async(req,res)=>{
 	res.status(200).json(finalresult)
 })
 
-app.get('/test/data',async(req,res)=>{
+app.get(PREFIX+'/test/data',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
@@ -569,7 +571,7 @@ app.get('/test/data',async(req,res)=>{
 	res.status(200).json(finalresult)
 })
 
-app.get('/dataid',async(req,res)=>{
+app.get(PREFIX+'/dataid',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
@@ -582,7 +584,7 @@ app.get('/dataid',async(req,res)=>{
 	res.status(200).json(finalresult)
 })
 
-app.get('/test/dataid',async(req,res)=>{
+app.get(PREFIX+'/test/dataid',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
