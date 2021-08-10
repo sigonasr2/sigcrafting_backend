@@ -261,7 +261,8 @@ CREATE TABLE "photon_art" (
   "pp" int,
   "frames" int,
   "dps" int,
-  "property" int
+  "property" int,
+  "icon" text
 );
 
 CREATE TABLE "enemy_data" (
