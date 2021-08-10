@@ -221,7 +221,26 @@ const ENDPOINTDATA=[
 	}
 ]
 
+const MAXATTEMPTS=5
+const LOCKOUTTIME=60000
+var failedattempts=0
+var lockedTime=new Date().getTime()-LOCKOUTTIME //Starts unlocked
+
 for (var test of ["","/test"]) {
+
+	app.post(PREFIX+test+"/passwordcheck",(req,res)=>{
+		db4.query('select * from password where password=$1',[req.body.pass])
+		.then((data)=>{
+			if (data.rows.length>0) {
+				res.status(200).json({verified:true})
+			} else {
+				var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+			}
+		})
+		.catch((err)=>{
+			res.status(500).send(err.message)
+		})
+	})
 	app.get(PREFIX+test+"/databases",(req,res)=>{
 		db4.query('select * from password where password=$1',[req.query.pass])
 		.then((data)=>{
@@ -392,13 +411,12 @@ for (var test of ["","/test"]) {
 
 function CreateDynamicEndpoints() {
 	ENDPOINTDATA.forEach((endpoint)=>{
-		for (var mydb of [db,db2]) {
-			app.get(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,(req,res)=>{
+		app.get(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 				db4.query('select * from password where password=$1',[req.query.pass])
 				.then((data)=>{
 					if (data.rows.length>0) {
 						if (endpoint.requiredfields.includes("name")) {
-							mydb.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+							db.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
 							.then((data)=>{
 								res.status(200).json({fields:data.fields,rows:data.rows})
 							})
@@ -406,7 +424,7 @@ function CreateDynamicEndpoints() {
 								res.status(500).send(err.message)
 							})
 						} else {
-							mydb.query('select * from '+endpoint.endpoint+" order by id desc")
+							db.query('select * from '+endpoint.endpoint+" order by id desc")
 							.then((data)=>{
 								res.status(200).json({fields:data.fields,rows:data.rows})
 							})
@@ -420,7 +438,7 @@ function CreateDynamicEndpoints() {
 				})
 			})
 			
-			app.post(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,async(req,res)=>{
+			app.post(PREFIX+"/"+endpoint.endpoint,async(req,res)=>{
 				db4.query('select * from password where password=$1',[req.body.pass])
 				.then(async(data)=>{
 					if (data.rows.length>0) {
@@ -440,7 +458,7 @@ function CreateDynamicEndpoints() {
 						var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 						var requiresInsert=true
 						if (endpoint.requiredfields.includes("name")) {
-							await mydb.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							await db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
 							.then((data)=>{
 								if (data.rows.length===0) {
 									requiresInsert=true
@@ -454,7 +472,7 @@ function CreateDynamicEndpoints() {
 							})
 						}
 						if (requiresInsert) {
-							mydb.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+							db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
 							.then((data)=>{
 								res.status(200).json(data.rows)
 							})
@@ -468,7 +486,7 @@ function CreateDynamicEndpoints() {
 				})
 			})
 			
-			app.patch(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,(req,res)=>{
+			app.patch(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 				if (req.body.id) {
 					db4.query('select * from password where password=$1',[req.body.pass])
 					.then((data)=>{
@@ -477,7 +495,7 @@ function CreateDynamicEndpoints() {
 							//console.log(combinedfields)
 							var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 							
-							return mydb.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
+							return db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
 						} else {
 							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
 						}
@@ -493,12 +511,12 @@ function CreateDynamicEndpoints() {
 				}
 			})
 			
-			app.delete(PREFIX+"/"+(mydb===db2?"test/":"")+endpoint.endpoint,(req,res)=>{
+			app.delete(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 				if (req.body.id) {
 					db4.query('select * from password where password=$1',[req.body.pass])
 					.then((data)=>{
 						if (data.rows.length>0) {
-							return mydb.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
+							return db.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
 						} else {
 							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
 						}
@@ -513,7 +531,127 @@ function CreateDynamicEndpoints() {
 					res.status(300).send("Invalid query!")
 				}
 			})
-		}
+			
+			app.get(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
+				db4.query('select * from password where password=$1',[req.query.pass])
+				.then((data)=>{
+					if (data.rows.length>0) {
+						if (endpoint.requiredfields.includes("name")) {
+							db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+							.then((data)=>{
+								res.status(200).json({fields:data.fields,rows:data.rows})
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						} else {
+							db2.query('select * from '+endpoint.endpoint+" order by id desc")
+							.then((data)=>{
+								res.status(200).json({fields:data.fields,rows:data.rows})
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}
+					} else {
+						res.status(500).send("Could not authenticate!")
+					}
+				})
+			})
+			
+			app.post(PREFIX+"/test/"+endpoint.endpoint,async(req,res)=>{
+				db4.query('select * from password where password=$1',[req.body.pass])
+				.then(async(data)=>{
+					if (data.rows.length>0) {
+						var allExist=true
+						endpoint.requiredfields.forEach((field)=>{
+							if (!(field in req.body)) {
+								allExist=false;
+							}
+						})
+						if (!allExist) {
+							res.status(300).send("Required fields are: "+endpoint.requiredfields.filter((field)=>!(field in req.body)).join(','))
+							return
+						}
+						
+						var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+						//console.log(combinedfields)
+						var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+						var requiresInsert=true
+						if (endpoint.requiredfields.includes("name")) {
+							await db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							.then((data)=>{
+								if (data.rows.length===0) {
+									requiresInsert=true
+								} else {
+									requiresInsert=false
+									res.status(200).json(data.rows)
+								}
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}
+						if (requiresInsert) {
+							db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+							.then((data)=>{
+								res.status(200).json(data.rows)
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}
+					} else {
+						res.status(500).send("Could not authenticate!")
+					}
+				})
+			})
+			
+			app.patch(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
+				if (req.body.id) {
+					db4.query('select * from password where password=$1',[req.body.pass])
+					.then((data)=>{
+						if (data.rows.length>0) {
+							var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+							//console.log(combinedfields)
+							var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+							
+							return db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
+						} else {
+							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+						}
+					})
+					.then((data)=>{
+						res.status(200).json(data.rows)
+					})
+					.catch((err)=>{
+						res.status(500).send(err.message)
+					})
+				} else {
+					res.status(300).send("Invalid query!")
+				}
+			})
+			
+			app.delete(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
+				if (req.body.id) {
+					db4.query('select * from password where password=$1',[req.body.pass])
+					.then((data)=>{
+						if (data.rows.length>0) {
+							return db2.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
+						} else {
+							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+						}
+					})
+					.then((data)=>{
+						res.status(200).json(data.rows)
+					})
+					.catch((err)=>{
+						res.status(500).send(err.message)
+					})
+				} else {
+					res.status(300).send("Invalid query!")
+				}
+			})
 	})
 }
 
