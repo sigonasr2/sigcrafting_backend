@@ -158,10 +158,10 @@ insert into roles(name)
 insert into roles(name)
 	values('Guest');
 	
-insert into users(username,email,password_hash,created_on,roles_id,avatar)
-	values('sigonasr2','sigonasr2@gmail.com','ABCDEFG','2021-07-13 04:30+00',(select id from roles where name='Administrator' limit 1),'');
-insert into users(username,email,password_hash,created_on,roles_id,avatar)
-	values('sigonasr3','sigonasr3@gmail.com','ABCDEF','2021-07-14 05:30+00',(select id from roles where name='Editor' limit 1),'');
+insert into users(username,email,password_hash,created_on,roles_id,avatar,recovery_hash)
+	values('sigonasr2','sigonasr2@gmail.com','ABCDEFG','2021-07-13 04:30+00',(select id from roles where name='Administrator' limit 1),'','');
+insert into users(username,email,password_hash,created_on,roles_id,avatar,recovery_hash)
+	values('sigonasr3','sigonasr3@gmail.com','ABCDEF','2021-07-14 05:30+00',(select id from roles where name='Editor' limit 1),'','');
 	
 insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice)
 	values((select id from users where username='sigonasr2' limit 1),'sigonasr2','Test Build',(select id from class where name='Ranger' limit 1),(select id from class where name='Force' limit 1),'2021-07-13 04:30+00','2021-07-13 04:30+00',5,'<DATA STRING>',0);

@@ -6,3 +6,4 @@ alter table weapon_existence_data add column special_name text;
 alter table potential drop column description;
 alter table potential_data add column description text;
 alter table photon_art add column icon text;
+alter table users add column recovery_hash text;

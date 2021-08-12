@@ -214,7 +214,8 @@ CREATE TABLE "users" (
   "created_on" timestamptz,
   "roles_id" int,
   "avatar" text,
-  "editors_choice" int
+  "editors_choice" int,
+  "recovery_hash" text
 );
 
 CREATE TABLE "roles" (
