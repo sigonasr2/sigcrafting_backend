@@ -4,6 +4,8 @@ var http = require('http');
 var https = require('https');
 const fs = require('fs');
 
+const sh = require('secrethash'); 
+
 var key = fs.readFileSync('./projectdivar.com/privkey1.pem');
 var cert = fs.readFileSync('./projectdivar.com/cert1.pem');
 var options = {
@@ -11,7 +13,7 @@ var options = {
   cert: cert
 };
 
-const app = express() 
+const app = express()
 
 var server = https.createServer(options, app);
 const port = 4504
@@ -789,7 +791,7 @@ app.get(PREFIX+'/test/dataid',async(req,res)=>{
 })
 
 app.post(PREFIX+"/validUser",(req,res)=>{
-	console.log(process.env.SALT)
+	console.log(sh.SecretHash("test"))
 	db.query('select * from users where username=$1 and password_hash=$2 limit 1',[req.body.username,req.body.password])
 	.then((data)=>{
 		if (data.rows.length>0) {
