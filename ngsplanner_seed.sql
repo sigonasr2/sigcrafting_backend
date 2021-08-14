@@ -1,3 +1,4 @@
+delete from skill_tree_data;
 delete from class_skill_data;
 delete from class_skill;
 delete from photon_art;
@@ -233,12 +234,12 @@ insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,
 insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
 	values((select id from augment_type where name='Precision' limit 1),3,0,0,0,0,1.02,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0);
 	
-insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,icon,popularity,editors_choice)
-	values('Primm Armor',1,1,8,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,'/icons/20M6Z7t.png',0,0);
-insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,icon,popularity,editors_choice)
-	values('Tzvia Armor',2,1,9,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.2,0,'/icons/F0t58xP.png',0,0);
-insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,icon,popularity,editors_choice)
-	values('Theseus Armor',3,5,10,10,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.1,0,'/icons/uldt9lR.png',0,0);
+insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,slot,icon,popularity,editors_choice)
+	values('Primm Armor',1,1,8,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,'/icons/20M6Z7t.png',0,0);
+insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,slot,icon,popularity,editors_choice)
+	values('Tzvia Armor',2,1,9,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.2,2,'/icons/F0t58xP.png',0,0);
+insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,slot,icon,popularity,editors_choice)
+	values('Theseus Armor',3,5,10,10,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.1,3,'/icons/uldt9lR.png',0,0);
 
 insert into database_audit(action,table_name,row_name,row_id,old_value,new_value,date,users_id)
 	values('INSERT','augment','crit_rate',4,'','0.15','2018-07-16 03:30+00',(select id from users where username='sigonasr2' limit 1));
@@ -274,3 +275,6 @@ insert into class_skill_data(name,class_skill_id,dependency,level,effect,duratio
 	values('War Cry Lv.2',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',2,'Effect Name',11,11,0.8,1.0,false,0.7,'',0,0,0,0.9,0,0,0,0,0);
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
 	values('Assault Charge Advent',(SELECT id from class_skill WHERE name='Assault Charge Advent' limit 1),'',1,'Effect Name',30,24,1.0,1.1,false,0.8,'',0,0,0,0,0,0,0.6,0,0);
+
+insert into skill_tree_data(class_id,data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy)
+	values((select id from class where name='Hunter'),'□  □  ,└□─┘□□, │  ││, │  □│, □─□┼□,    □ ','','#000000',3,80,60,10,10);

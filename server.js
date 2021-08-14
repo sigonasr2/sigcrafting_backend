@@ -122,7 +122,7 @@ const ENDPOINTDATA=[
 	{
 		endpoint:"armor",
 		requiredfields:["name","rarity","level_req","def"],
-		optionalfields:["hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","pb_gauge_build","icon","popularity","editors_choice"],
+		optionalfields:["hp","pp","mel_dmg","rng_dmg","tec_dmg","crit_rate","crit_dmg","pp_cost_reduction","active_pp_recovery","natural_pp_recovery","dmg_res","all_down_res","burn_res","freeze_res","blind_res","shock_res","panic_res","poison_res","battle_power_value","slot","icon","popularity","editors_choice"],
 		excludedfields:[] //Fields to not output in GET.
 	},
 	{
@@ -219,6 +219,12 @@ const ENDPOINTDATA=[
 		endpoint:"database_audit",
 		requiredfields:["action","table_name","row_name","row_id","new_value","date","users_id"],
 		optionalfields:["old_value"],
+		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"skill_tree_data",
+		requiredfields:["class_id","data","skill_data","line_color","line_width","gridsizex","gridsizey","gridpaddingx","gridpaddingy"],
+		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	}
 ]
@@ -382,15 +388,15 @@ for (var test of ["","/test"]) {
 	})
 
 	app.post(PREFIX+test+"/databases/backup",(req,res)=>{
+		var date = new Date()
 		db4.query('select * from password where password=$1',[req.body.pass])
 		.then((data)=>{
 			if (data.rows.length>0) {
 				db.end(()=>{})
-				var date = new Date()
 				return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
 			} else {
 				var msg="Could not authenticate!";res.status(500).send(msg);throw msg
-			}
+			} 
 		})
 		.then(()=>{
 			return db3.query('create database ngsplanner'+String(date.getFullYear()).padStart(4,'0')+String(date.getMonth()).padStart(2,'0')+String(date.getDate()).padStart(2,'0')+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+String(date.getSeconds()).padStart(2,'0')+' with template ngsplanner')
@@ -791,8 +797,8 @@ app.get(PREFIX+'/test/dataid',async(req,res)=>{
 })
 
 app.post(PREFIX+"/validUser",(req,res)=>{
-	console.log(sh.SecretHash("test"))
-	db.query('select * from users where username=$1 and password_hash=$2 limit 1',[req.body.username,req.body.password])
+	//console.log(sh.SecretHash("098f6bcd4621d373cade4e832627b4f6"))
+	db.query('select * from users where username=$1 and password_hash=$2 limit 1',[req.body.username,sh.SecretHash(req.body.password)])
 	.then((data)=>{
 		if (data.rows.length>0) {
 			res.status(200).json({verified:true})
@@ -808,6 +814,6 @@ app.post(PREFIX+"/validUser",(req,res)=>{
 //Generates our table schema:
 ENDPOINTDATA.forEach((endpoint)=>{
 	console.log(endpoint.endpoint+":\n\t"+endpoint.requiredfields.join('\t')+(endpoint.optionalfields.length>0?"\t":"")+endpoint.optionalfields.join("\t"))
-})
+}) 
 
 CreateDynamicEndpoints()
