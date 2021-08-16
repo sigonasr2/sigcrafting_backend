@@ -316,7 +316,8 @@ CREATE TABLE "skill_tree_data" (
   "gridsizex" int,
   "gridsizey" int,
   "gridpaddingx" int,
-  "gridpaddingy" int
+  "gridpaddingy" int,
+  "halflineheight" int
 );
 
 ALTER TABLE "builds" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");

@@ -223,7 +223,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"skill_tree_data",
-		requiredfields:["class_id","data","skill_data","line_color","line_width","gridsizex","gridsizey","gridpaddingx","gridpaddingy"],
+		requiredfields:["class_id","data","skill_data","line_color","line_width","gridsizex","gridsizey","gridpaddingx","gridpaddingy","halflineheight"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	}
