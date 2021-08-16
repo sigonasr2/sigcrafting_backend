@@ -811,6 +811,58 @@ app.post(PREFIX+"/validUser",(req,res)=>{
 	})
 })
 
+app.post(PREFIX+"/saveskilltree",(req,res)=>{
+	db4.query('select * from password where password=$1',[req.body.pass])
+	.then((data)=>{
+		if (data.rows.length>0) {
+			return db.query('select * from skill_tree_data where class_id=$1 limit 1',[req.body.class_id])
+		} else {
+			var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+		}
+	})
+	.then((data)=>{
+		if (data.rows.length>0) {
+			return db.query('update skill_tree_data set data=$1,skill_data=$2,line_color=$3,line_width=$4,gridsizex=$5,gridsizey=$6,gridpaddingx=$7,gridpaddingy=$8 where class_id=$9',
+			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.class_id])
+		} else {
+			return db.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.class_id])
+		}
+	})
+	.then((data)=>{
+		res.status(200).send("OK!")
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
+})
+
+app.post(PREFIX+"/test/saveskilltree",(req,res)=>{
+	db4.query('select * from password where password=$1',[req.body.pass])
+	.then((data)=>{
+		if (data.rows.length>0) {
+			return db2.query('select * from skill_tree_data where class_id=$1 limit 1',[req.body.class_id])
+		} else {
+			var msg="Could not authenticate!";res.status(500).send(msg);throw msg
+		}
+	})
+	.then((data)=>{
+		if (data.rows.length>0) {
+			return db2.query('update skill_tree_data set data=$1,skill_data=$2,line_color=$3,line_width=$4,gridsizex=$5,gridsizey=$6,gridpaddingx=$7,gridpaddingy=$8 where class_id=$9',
+			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.class_id])
+		} else {
+			return db2.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.class_id])
+		}
+	})
+	.then((data)=>{
+		res.status(200).send("OK!")
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
+})
+
 //Generates our table schema:
 ENDPOINTDATA.forEach((endpoint)=>{
 	console.log(endpoint.endpoint+":\n\t"+endpoint.requiredfields.join('\t')+(endpoint.optionalfields.length>0?"\t":"")+endpoint.optionalfields.join("\t"))
