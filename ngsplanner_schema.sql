@@ -127,7 +127,7 @@ CREATE TABLE "armor" (
   "panic_res" float,
   "poison_res" float,
   "slot" int,
-  "pb_gauge_build" float,
+  "battle_power_value" float,
   "icon" text,
   "popularity" int,
   "editors_choice" int
