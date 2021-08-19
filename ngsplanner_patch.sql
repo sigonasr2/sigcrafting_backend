@@ -12,3 +12,4 @@ alter table armor add column battle_power_value text;
 CREATE TABLE "skill_tree_data"("id" SERIAL UNIQUE PRIMARY KEY,"class_id" int,"data" text,"skill_data" text,"line_color" text,"line_width" int,"gridsizex" int,"gridsizey" int,"gridpaddingx" int,"gridpaddingy" int);
 ALTER TABLE "skill_tree_data" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
 alter table skill_tree_data add column halflineheight int;
+CREATE TABLE "site_data" ("id" SERIAL UNIQUE PRIMARY KEY,"field" text,"data" text);

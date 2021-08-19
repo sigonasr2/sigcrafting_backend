@@ -320,6 +320,12 @@ CREATE TABLE "skill_tree_data" (
   "halflineheight" int
 );
 
+CREATE TABLE "site_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "field" text,
+  "data" text
+);
+
 ALTER TABLE "builds" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
 ALTER TABLE "users" ADD FOREIGN KEY ("roles_id") REFERENCES "roles" ("id");

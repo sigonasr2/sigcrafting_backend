@@ -181,6 +181,12 @@ const ENDPOINTDATA=[
 		requiredfields:["class_id","data","skill_data","line_color","line_width","gridsizex","gridsizey","gridpaddingx","gridpaddingy","halflineheight"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
+	},
+	{
+		endpoint:"site_data",
+		requiredfields:["field","data"],
+		optionalfields:[],
+		excludedfields:[] //Fields to not output in GET.
 	}
 ]
 
