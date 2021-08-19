@@ -780,7 +780,7 @@ app.post(PREFIX+"/saveskilltree",(req,res)=>{
 			return db.query('update skill_tree_data set data=$1,skill_data=$2,line_color=$3,line_width=$4,gridsizex=$5,gridsizey=$6,gridpaddingx=$7,gridpaddingy=$8,halflineheight=$9 where class_id=$10',
 			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
 		} else {
-			return db.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id,halflineheight) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+			return db.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id,halflineheight) values($1,$2,$3,$4,$5,$6,$7,$8,$10,$9)',
 			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
 		}
 	})
@@ -806,7 +806,7 @@ app.post(PREFIX+"/test/saveskilltree",(req,res)=>{
 			return db2.query('update skill_tree_data set data=$1,skill_data=$2,line_color=$3,line_width=$4,gridsizex=$5,gridsizey=$6,gridpaddingx=$7,gridpaddingy=$8,halflineheight=$9 where class_id=$10',
 			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
 		} else {
-			return db2.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id,halflineheight) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+			return db2.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id,halflineheight) values($1,$2,$3,$4,$5,$6,$7,$8,$10,$9)',
 			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
 		}
 	})
