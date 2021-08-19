@@ -127,7 +127,7 @@ CREATE TABLE "armor" (
   "panic_res" float,
   "poison_res" float,
   "slot" int,
-  "pb_gauge_build" float,
+  "battle_power_value" float,
   "icon" text,
   "popularity" int,
   "editors_choice" int
@@ -316,7 +316,14 @@ CREATE TABLE "skill_tree_data" (
   "gridsizex" int,
   "gridsizey" int,
   "gridpaddingx" int,
-  "gridpaddingy" int
+  "gridpaddingy" int,
+  "halflineheight" int
+);
+
+CREATE TABLE "site_data" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "field" text,
+  "data" text
 );
 
 ALTER TABLE "builds" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
