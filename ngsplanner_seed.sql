@@ -268,15 +268,15 @@ insert into class_skill(name,class_id,icon,description)
 	values('Assault Charge Advent',(SELECT id from class WHERE name='Gunner' limit 1),'','This is ');
 	
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('Hunter Physique Lv.1',(SELECT id from class_skill WHERE name='Hunter Physique' limit 1),'',1,'Effect Name',20,15,0.7,1,false,0.5,'',0,0,0,0,0,0,0,0,0);
+	values('Hunter Physique Lv.1',(SELECT id from class_skill WHERE name='Hunter Physique' limit 1),'',1,'Effect Name',20,15,'0.7','1',false,'0.5','','0','0','0','0','0','0','0',0,'0');
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('War Cry Lv.1',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',1,'Effect Name',14,10,0.5,1.1,false,0.8,'',0,0,0,0.6,0,0,0,0,0);
+	values('War Cry Lv.1',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',1,'Effect Name',14,10,0.5,'1.1','0.8',false,'0.6','','0','0','0','0','0','0','0',0,'0');
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('War Cry Lv.2',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',2,'Effect Name',11,11,0.8,1.0,false,0.7,'',0,0,0,0.9,0,0,0,0,0);
+	values('War Cry Lv.2',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',2,'Effect Name',11,11,'0.8','1',false,'0.5','','0','0','0','0','0','0','0',0,'0');
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('Assault Charge Advent',(SELECT id from class_skill WHERE name='Assault Charge Advent' limit 1),'',1,'Effect Name',30,24,1.0,1.1,false,0.8,'',0,0,0,0,0,0,0.6,0,0);
+	values('Assault Charge Advent',(SELECT id from class_skill WHERE name='Assault Charge Advent' limit 1),'',1,'Effect Name',30,24,'1.8','1',false,'0.5','','0','0','0','0','0','0','0',0,'1.6');
 
 insert into skill_tree_data(class_id,data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,halflineheight)
 	values((select id from class where name='Hunter'),'□  □  ,└□─┘□□, │  ││, │  □│, □─□┼□,    □ ','','#000000',3,80,60,10,10,60);
 
-insert into site_data(field,data) values('UNDER_CONSTRUCTION_TEXT','NGSplanner.com is currently under construction! Please check back after Sig yells at me enough to help finish it.');
+insert into site_data(name,data) values('UNDER_CONSTRUCTION_TEXT','NGSplanner.com is currently under construction! Please check back after Sig yells at me enough to help finish it.');

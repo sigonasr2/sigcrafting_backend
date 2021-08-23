@@ -13,3 +13,17 @@ CREATE TABLE "skill_tree_data"("id" SERIAL UNIQUE PRIMARY KEY,"class_id" int,"da
 ALTER TABLE "skill_tree_data" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
 alter table skill_tree_data add column halflineheight int;
 CREATE TABLE "site_data" ("id" SERIAL UNIQUE PRIMARY KEY,"field" text,"data" text);
+alter table class_skill_data alter column damage_taken set data type text;
+alter table class_skill_data alter column pa_potency set data type text;
+alter table class_skill_data alter column conditional_buff set data type text;
+alter table class_skill_data alter column pp_recovery set data type text;
+alter table class_skill_data alter column property set data type text;
+alter table class_skill_data alter column all_damage_buff set data type text;
+alter table class_skill_data alter column active_pp_recovery set data type text;
+alter table class_skill_data alter column status_ailment_accum set data type text;
+alter table class_skill_data alter column status_ailment_duration set data type text;
+alter table class_skill_data alter column pp_consumption set data type text;
+alter table class_skill_data alter column max_hp_decrease set data type text;
+alter table class_skill_data alter column natural_pp_recovery set data type text;
+alter table class_skill_data alter column pb_gauge_fortification set data type text;
+alter table site_data rename column field to name;

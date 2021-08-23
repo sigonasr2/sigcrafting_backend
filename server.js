@@ -229,7 +229,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"site_data",
-		requiredfields:["field","data"],
+		requiredfields:["name","data"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	}
@@ -472,10 +472,14 @@ function CreateDynamicEndpoints() {
 						var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 						var requiresInsert=true
 						if (endpoint.requiredfields.includes("name")) {
+							/*console.log(['update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
+							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
+								if (Number.isNaN(Number(req.body[field]))) {return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]]])*/
 							await db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
 							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
 								if (Number.isNaN(Number(req.body[field]))) {return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
-							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]),req.body["name"]])
 							.then((data)=>{
 								if (data.rows.length===0) {
 									requiresInsert=true
@@ -492,7 +496,7 @@ function CreateDynamicEndpoints() {
 							db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>{
 								if (!field.includes("_id")) {return "$"+(i+1)}else{
 									if (Number.isNaN(Number(req.body[field]))) {return "(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return "$"+(i+1)}
-								}}).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+								}}).join(",")+") returning *",all_filled_fields.map((field)=>typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]))
 							.then((data)=>{
 								res.status(200).json(data.rows)
 							})
@@ -521,8 +525,10 @@ function CreateDynamicEndpoints() {
 						if (endpoint.requiredfields.includes("name")) {
 							await db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
 							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
-								if (Number.isNaN(Number(req.body[field]))) {return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
-							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+								if (Number.isNaN(Number(req.body[field]))) {
+									console.log(field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")");
+									return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]),req.body["name"]])
 							.then((data)=>{
 								if (data.rows.length===0) {
 									requiresInsert=true
@@ -539,7 +545,7 @@ function CreateDynamicEndpoints() {
 							db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>{
 								if (!field.includes("_id")) {return "$"+(i+1)}else{
 									if (Number.isNaN(Number(req.body[field]))) {return "(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return "$"+(i+1)}
-								}}).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+								}}).join(",")+") returning *",all_filled_fields.map((field)=>typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]))
 							.then((data)=>{
 								res.status(200).json(data.rows)
 							})
@@ -551,10 +557,18 @@ function CreateDynamicEndpoints() {
 						res.status(500).send("Could not authenticate!")
 					}
 				})
+				.catch((err)=>{
+					console.log(err.message)
+					res.status(500).send(err.message)
+				})
 			})
 					} else {
 						res.status(500).send("Could not authenticate!")
 					}
+				})
+				.catch((err)=>{
+					console.log(err.message)
+					res.status(500).send(err.message)
 				})
 			})
 			
@@ -651,7 +665,14 @@ function CreateDynamicEndpoints() {
 						var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 						var requiresInsert=true
 						if (endpoint.requiredfields.includes("name")) {
-							await db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							/*console.log(['update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
+							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
+								if (Number.isNaN(Number(req.body[field]))) {return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]]])*/
+							await db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
+							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
+								if (Number.isNaN(Number(req.body[field]))) {return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]),req.body["name"]])
 							.then((data)=>{
 								if (data.rows.length===0) {
 									requiresInsert=true
@@ -665,7 +686,59 @@ function CreateDynamicEndpoints() {
 							})
 						}
 						if (requiresInsert) {
-							db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+							db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>{
+								if (!field.includes("_id")) {return "$"+(i+1)}else{
+									if (Number.isNaN(Number(req.body[field]))) {return "(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return "$"+(i+1)}
+								}}).join(",")+") returning *",all_filled_fields.map((field)=typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]))
+							.then((data)=>{
+								res.status(200).json(data.rows)
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}app.post(PREFIX+"/"+endpoint.endpoint,async(req,res)=>{
+				db4.query('select * from password where password=$1',[req.body.pass])
+				.then(async(data)=>{
+					if (data.rows.length>0) {
+						var allExist=true
+						endpoint.requiredfields.forEach((field)=>{
+							if (!(field in req.body)) {
+								allExist=false;
+							}
+						})
+						if (!allExist) {
+							res.status(300).send("Required fields are: "+endpoint.requiredfields.filter((field)=>!(field in req.body)).join(','))
+							return
+						}
+						
+						var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
+						//console.log(combinedfields)
+						var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
+						var requiresInsert=true
+						if (endpoint.requiredfields.includes("name")) {
+							await db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
+							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
+								if (Number.isNaN(Number(req.body[field]))) {
+									console.log(field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")");
+									return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]),req.body["name"]])
+							.then((data)=>{
+								if (data.rows.length===0) {
+									requiresInsert=true
+								} else {
+									requiresInsert=false
+									res.status(200).json(data.rows)
+								}
+							})
+							.catch((err)=>{
+								res.status(500).send(err.message)
+							})
+						}
+						if (requiresInsert) {
+							db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>{
+								if (!field.includes("_id")) {return "$"+(i+1)}else{
+									if (Number.isNaN(Number(req.body[field]))) {return "(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return "$"+(i+1)}
+								}}).join(",")+") returning *",all_filled_fields.map((field)=>typeof req.body[field] === 'string'?req.body[field].trim():req.body[field]))
 							.then((data)=>{
 								res.status(200).json(data.rows)
 							})
@@ -676,6 +749,19 @@ function CreateDynamicEndpoints() {
 					} else {
 						res.status(500).send("Could not authenticate!")
 					}
+				})
+				.catch((err)=>{
+					console.log(err.message)
+					res.status(500).send(err.message)
+				})
+			})
+					} else {
+						res.status(500).send("Could not authenticate!")
+					}
+				})
+				.catch((err)=>{
+					console.log(err.message)
+					res.status(500).send(err.message)
 				})
 			})
 			

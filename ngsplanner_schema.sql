@@ -117,7 +117,7 @@ CREATE TABLE "armor" (
   "crit_dmg" float,
   "pp_cost_reduction" float,
   "active_pp_recovery" float,
-  "natural_pp_recovery" float,
+  "natural_pp_recovery" text,
   "dmg_res" float,
   "all_down_res" float,
   "burn_res" float,
@@ -247,20 +247,20 @@ CREATE TABLE "class_skill_data" (
   "effect" text,
   "duration" int,
   "cooldown" int,
-  "damage_taken" float,
-  "pa_potency" float,
+  "damage_taken" text,
+  "pa_potency" text,
   "conditional_buff" boolean,
-  "pp_recovery" float,
+  "pp_recovery" text,
   "property" text,
-  "all_damage_buff" float,
-  "active_pp_recovery" float,
-  "status_ailment_accum" float,
-  "status_ailment_duration" float,
-  "pp_consumption" float,
-  "max_hp_decrease" float,
-  "natural_pp_recovery" float,
+  "all_damage_buff" text,
+  "active_pp_recovery" text,
+  "status_ailment_accum" text,
+  "status_ailment_duration" text,
+  "pp_consumption" text,
+  "max_hp_decrease" text,
+  "natural_pp_recovery" text,
   "added_pp" int,
-  "pb_gauge_fortification" float
+  "pb_gauge_fortification" text
 );
 
 CREATE TABLE "database_audit" (
@@ -322,7 +322,7 @@ CREATE TABLE "skill_tree_data" (
 
 CREATE TABLE "site_data" (
   "id" SERIAL UNIQUE PRIMARY KEY,
-  "field" text,
+  "name" text,
   "data" text
 );
 
