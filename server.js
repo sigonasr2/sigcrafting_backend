@@ -74,6 +74,11 @@ new Pool({
   port: 5432,
 })
 
+
+app.get('/',async(req,res)=>{
+	res.status(200).send('BUN is love, BUN is life.')
+})
+
 const PREFIX=""
 
 const ENDPOINTDATA=[
@@ -266,52 +271,8 @@ for (var test of ["","/test"]) {
 		})
 		.then((data)=>{
 			res.status(200).json(data.rows)
-		})
-		.catch((err)=>{
-			res.status(500).send(err.message)
-		})
-	})
-
-	app.post(PREFIX+test+"/databases/restorefrombackup",(req,res)=>{
-		if (req.body.database) {
-			db4.query('select * from password where password=$1',[req.body.pass])
-			.then((data)=>{
-				if (data.rows.length>0) {
-					return db3.query('select * from pg_database where datname=$1',[req.body.database])
-				} else {
-					var msg="Could not authenticate!";res.status(500).send(msg);throw msg
-				}
-			})
-			.then((data)=>{
-				if (data.rows.length>0) {
-					db.end(()=>{})
-					return db3.query('select pg_terminate_backend (pid) from pg_stat_activity where pg_stat_activity.datname=\'ngsplanner\'')
-				} else {
-					var msg="Could not find requested database "+req.body.database;res.status(500).send(msg);throw msg
-				}
-			})
-			.then(()=>{
-				return db3.query('drop database ngsplanner') 
-			})
-			.then(()=>{
-				return db3.query('create database ngsplanner with template '+req.body.database)
-			})
-			.then(()=>{
-				db = new Pool({
-				  user: 'postgres',
-				  password: '',
-				  host: 'postgres',
-				  database: 'ngsplanner',
-				  port: 5432,
-				})
-				res.status(200).send("Done!")
-			})
-			.catch((err)=>{
-				console.log(err.message)
-				res.status(500).send(err.message)
-			})
 		} else {
-			res.status(500).send("Invalid data!")
+			res.status(204).send("No data")
 		}
 	})
 	app.post(PREFIX+test+"/databases/testtolive",(req,res)=>{
@@ -820,144 +781,37 @@ function CleanUp(arr,vals){
 		})
 		return arrVal
 	})
-}
-
-app.get(PREFIX+'/data',async(req,res)=>{
-	var finalresult = {}
-	var promises = []
-	for (var endpoint of ENDPOINTDATA) {
-		if (endpoint.requiredfields.includes("name")) {
-			await db.query('select * from (select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc)t order by id asc')
-			.then((data)=>{
-				finalresult[endpoint.endpoint]={}
-				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
-			})
-		} else {
-			await db.query('select * from '+endpoint.endpoint+" order by id desc")
-			.then((data)=>{
-				finalresult[endpoint.endpoint]=data.rows
-			})
-		}
-	}
-	res.status(200).json(finalresult)
 })
 
-app.get(PREFIX+'/test/data',async(req,res)=>{
-	var finalresult = {}
-	var promises = []
-	for (var endpoint of ENDPOINTDATA) {
-		if (endpoint.requiredfields.includes("name")) {
-			await db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
-			.then((data)=>{
-				finalresult[endpoint.endpoint]={}
-				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
-			})
-		} else {
-			await db2.query('select * from '+endpoint.endpoint+" order by id desc")
-			.then((data)=>{
-				finalresult[endpoint.endpoint]=data.rows
-			})
-		}
-	}
-	res.status(200).json(finalresult)
-})
-
-app.get(PREFIX+'/dataid',async(req,res)=>{
-	var finalresult = {}
-	var promises = []
-	for (var endpoint of ENDPOINTDATA) {
-		await db.query('select * from '+endpoint.endpoint+' order by id asc')
-		.then((data)=>{
-			finalresult[endpoint.endpoint]={}
-			data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
-		})
-	}
-	res.status(200).json(finalresult)
-})
-
-app.get(PREFIX+'/test/dataid',async(req,res)=>{
-	var finalresult = {}
-	var promises = []
-	for (var endpoint of ENDPOINTDATA) {
-		await db2.query('select * from '+endpoint.endpoint+' order by id asc')
-		.then((data)=>{
-			finalresult[endpoint.endpoint]={}
-			data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
-		})
-	}
-	res.status(200).json(finalresult)
-})
-
-app.post(PREFIX+"/validUser",(req,res)=>{
-	//console.log(sh.SecretHash("098f6bcd4621d373cade4e832627b4f6"))
-	db.query('select * from users where username=$1 and password_hash=$2 limit 1',[req.body.username,sh.SecretHash(req.body.password)])
+app.get('/lastUpdate',(req,res)=>{
+	db.query("select * from site_data limit 1")
 	.then((data)=>{
-		if (data.rows.length>0) {
-			res.status(200).json({verified:true})
-		} else {
-			res.status(200).json({verified:false})
-		}
+		res.status(200).json(data.rows)
 	})
 	.catch((err)=>{
 		res.status(500).send(err.message)
 	})
 })
 
-app.post(PREFIX+"/saveskilltree",(req,res)=>{
-	db4.query('select * from password where password=$1',[req.body.pass])
+app.post("/updateItem",(req,res)=>{
+	db.query("update crafting_list set obtained=$1 where id=$2",[req.body.obtained,req.body.id])
 	.then((data)=>{
-		if (data.rows.length>0) {
-			return db.query('select * from skill_tree_data where class_id=$1 limit 1',[req.body.class_id])
-		} else {
-			var msg="Could not authenticate!";res.status(500).send(msg);throw msg
-		}
+		return db.query("update site_data set last_modified=$1",[req.body.last_modified])
 	})
 	.then((data)=>{
-		if (data.rows.length>0) {
-			return db.query('update skill_tree_data set data=$1,skill_data=$2,line_color=$3,line_width=$4,gridsizex=$5,gridsizey=$6,gridpaddingx=$7,gridpaddingy=$8,halflineheight=$9 where class_id=$10',
-			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
-		} else {
-			return db.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id,halflineheight) values($1,$2,$3,$4,$5,$6,$7,$8,$10,$9)',
-			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
-		}
-	})
-	.then((data)=>{
-		res.status(200).send("OK!")
+		res.status(200).send("Yay!")
 	})
 	.catch((err)=>{
 		res.status(500).send(err.message)
 	})
 })
 
-app.post(PREFIX+"/test/saveskilltree",(req,res)=>{
-	db4.query('select * from password where password=$1',[req.body.pass])
+app.post('/setItem',(req,res)=>{
+	db.query('insert into crafting_list(itemid,name,obtained,required,icon) values($1,$2,$3,$4,$5)',[req.body.itemid,req.body.name,req.body.obtained,req.body.required,req.body.icon])
 	.then((data)=>{
-		if (data.rows.length>0) {
-			return db2.query('select * from skill_tree_data where class_id=$1 limit 1',[req.body.class_id])
-		} else {
-			var msg="Could not authenticate!";res.status(500).send(msg);throw msg
-		}
-	})
-	.then((data)=>{
-		if (data.rows.length>0) {
-			return db2.query('update skill_tree_data set data=$1,skill_data=$2,line_color=$3,line_width=$4,gridsizex=$5,gridsizey=$6,gridpaddingx=$7,gridpaddingy=$8,halflineheight=$9 where class_id=$10',
-			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
-		} else {
-			return db2.query('insert into skill_tree_data(data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,class_id,halflineheight) values($1,$2,$3,$4,$5,$6,$7,$8,$10,$9)',
-			[req.body.data,req.body.skill_data,req.body.line_color,req.body.line_width,req.body.gridsizex,req.body.gridsizey,req.body.gridpaddingx,req.body.gridpaddingy,req.body.halflineheight,req.body.class_id])
-		}
-	})
-	.then((data)=>{
-		res.status(200).send("OK!")
+		res.status(200).send("Yay!")
 	})
 	.catch((err)=>{
 		res.status(500).send(err.message)
 	})
 })
-
-//Generates our table schema:
-ENDPOINTDATA.forEach((endpoint)=>{
-	console.log(endpoint.endpoint+":\n\t"+endpoint.requiredfields.join('\t')+(endpoint.optionalfields.length>0?"\t":"")+endpoint.optionalfields.join("\t"))
-}) 
-
-CreateDynamicEndpoints()
