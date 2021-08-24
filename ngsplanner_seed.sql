@@ -1,3 +1,4 @@
+delete from site_data;
 delete from skill_tree_data;
 delete from class_skill_data;
 delete from class_skill;
