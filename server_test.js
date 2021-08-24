@@ -184,7 +184,7 @@ const ENDPOINTDATA=[
 	},
 	{
 		endpoint:"site_data",
-		requiredfields:["field","data"],
+		requiredfields:["name","data"],
 		optionalfields:[],
 		excludedfields:[] //Fields to not output in GET.
 	}
@@ -198,7 +198,7 @@ var lockedTime=new Date().getTime()-LOCKOUTTIME //Starts unlocked
 for (var test of ["","/test"]) {
 
 	app.post(PREFIX+test+"/passwordcheck",(req,res)=>{
-		db.query('select * from password where password=$1',[req.body.pass])
+		db4.query('select * from password where password=$1',[req.body.pass])
 		.then((data)=>{
 			if (data.rows.length>0) {
 				res.status(200).json({verified:true})
@@ -211,7 +211,7 @@ for (var test of ["","/test"]) {
 		})
 	})
 	app.get(PREFIX+test+"/databases",(req,res)=>{
-		db.query('select * from password where password=$1',[req.query.pass])
+		db4.query('select * from password where password=$1',[req.query.pass])
 		.then((data)=>{
 			if (data.rows.length>0) {
 				return db.query('select * from pg_database where datname like \'ngsplanner%\' order by datname desc limit 100')	
@@ -229,7 +229,7 @@ for (var test of ["","/test"]) {
 
 	app.post(PREFIX+test+"/databases/restorefrombackup",(req,res)=>{
 		if (req.body.database) {
-			db.query('select * from password where password=$1',[req.body.pass])
+			db4.query('select * from password where password=$1',[req.body.pass])
 			.then((data)=>{
 				if (data.rows.length>0) {
 					return db3.query('select * from pg_database where datname=$1',[req.body.database])
@@ -270,7 +270,7 @@ for (var test of ["","/test"]) {
 		}
 	})
 	app.post(PREFIX+test+"/databases/testtolive",(req,res)=>{
-		db.query('select * from password where password=$1',[req.body.pass])
+		db4.query('select * from password where password=$1',[req.body.pass])
 		.then((data)=>{
 			if (data.rows.length>0) {
 				db.end(()=>{})
@@ -310,7 +310,7 @@ for (var test of ["","/test"]) {
 	})
 
 	app.post(PREFIX+test+"/databases/livetotest",(req,res)=>{
-		db.query('select * from password where password=$1',[req.body.pass])
+		db4.query('select * from password where password=$1',[req.body.pass])
 		.then((data)=>{
 			if (data.rows.length>0) {
 				db.end(()=>{})
@@ -350,7 +350,7 @@ for (var test of ["","/test"]) {
 
 	app.post(PREFIX+test+"/databases/backup",(req,res)=>{
 		var date = new Date()
-		db.query('select * from password where password=$1',[req.body.pass])
+		db4.query('select * from password where password=$1',[req.body.pass])
 		.then((data)=>{
 			if (data.rows.length>0) {
 				db.end(()=>{})
@@ -381,7 +381,7 @@ for (var test of ["","/test"]) {
 function CreateDynamicEndpoints() {
 	ENDPOINTDATA.forEach((endpoint)=>{
 		app.get(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
-				db.query('select * from password where password=$1',[req.query.pass])
+				db4.query('select * from password where password=$1',[req.query.pass])
 				.then((data)=>{
 					if (data.rows.length>0) {
 						if (endpoint.requiredfields.includes("name")) {
@@ -408,7 +408,7 @@ function CreateDynamicEndpoints() {
 			})
 			
 			app.post(PREFIX+"/"+endpoint.endpoint,async(req,res)=>{
-				db.query('select * from password where password=$1',[req.body.pass])
+				db4.query('select * from password where password=$1',[req.body.pass])
 				.then(async(data)=>{
 					if (data.rows.length>0) {
 						var allExist=true
@@ -430,7 +430,7 @@ function CreateDynamicEndpoints() {
 							await db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
 							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
 								if (Number.isNaN(Number(req.body[field]))) {return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
-							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]),req.body["name"]])
 							.then((data)=>{
 								if (data.rows.length===0) {
 									requiresInsert=true
@@ -447,7 +447,7 @@ function CreateDynamicEndpoints() {
 							db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>{
 								if (!field.includes("_id")) {return "$"+(i+1)}else{
 									if (Number.isNaN(Number(req.body[field]))) {return "(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return "$"+(i+1)}
-								}}).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+								}}).join(",")+") returning *",all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]))
 							.then((data)=>{
 								res.status(200).json(data.rows)
 							})
@@ -455,7 +455,7 @@ function CreateDynamicEndpoints() {
 								res.status(500).send(err.message)
 							})
 						}app.post(PREFIX+"/"+endpoint.endpoint,async(req,res)=>{
-				db.query('select * from password where password=$1',[req.body.pass])
+				db4.query('select * from password where password=$1',[req.body.pass])
 				.then(async(data)=>{
 					if (data.rows.length>0) {
 						var allExist=true
@@ -477,7 +477,7 @@ function CreateDynamicEndpoints() {
 							await db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>{
 							if (!field.includes("_id")) {return field+"=$"+(i+1)}else{
 								if (Number.isNaN(Number(req.body[field]))) {return field+"=(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return field+"=$"+(i+1)}
-							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							}}).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]),req.body["name"]])
 							.then((data)=>{
 								if (data.rows.length===0) {
 									requiresInsert=true
@@ -494,7 +494,7 @@ function CreateDynamicEndpoints() {
 							db.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>{
 								if (!field.includes("_id")) {return "$"+(i+1)}else{
 									if (Number.isNaN(Number(req.body[field]))) {return "(select id from "+field.replace("_id","")+" where name=$"+(i+1)+")"} else {return "$"+(i+1)}
-								}}).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+								}}).join(",")+") returning *",all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]))
 							.then((data)=>{
 								res.status(200).json(data.rows)
 							})
@@ -515,14 +515,14 @@ function CreateDynamicEndpoints() {
 			
 			app.patch(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 				if (req.body.id) {
-					db.query('select * from password where password=$1',[req.body.pass])
+					db4.query('select * from password where password=$1',[req.body.pass])
 					.then((data)=>{
 						if (data.rows.length>0) {
 							var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
 							//console.log(combinedfields)
 							var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 							
-							return db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
+							return db.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]),req.body.id])
 						} else {
 							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
 						}
@@ -540,7 +540,7 @@ function CreateDynamicEndpoints() {
 			
 			app.delete(PREFIX+"/"+endpoint.endpoint,(req,res)=>{
 				if (req.body.id) {
-					db.query('select * from password where password=$1',[req.body.pass])
+					db4.query('select * from password where password=$1',[req.body.pass])
 					.then((data)=>{
 						if (data.rows.length>0) {
 							return db.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
@@ -560,7 +560,7 @@ function CreateDynamicEndpoints() {
 			})
 			
 			app.get(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
-				db.query('select * from password where password=$1',[req.query.pass])
+				db4.query('select * from password where password=$1',[req.query.pass])
 				.then((data)=>{
 					if (data.rows.length>0) {
 						if (endpoint.requiredfields.includes("name")) {
@@ -587,7 +587,7 @@ function CreateDynamicEndpoints() {
 			})
 			
 			app.post(PREFIX+"/test/"+endpoint.endpoint,async(req,res)=>{
-				db.query('select * from password where password=$1',[req.body.pass])
+				db4.query('select * from password where password=$1',[req.body.pass])
 				.then(async(data)=>{
 					if (data.rows.length>0) {
 						var allExist=true
@@ -606,7 +606,7 @@ function CreateDynamicEndpoints() {
 						var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 						var requiresInsert=true
 						if (endpoint.requiredfields.includes("name")) {
-							await db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>req.body[field]),req.body["name"]])
+							await db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+' where name=$'+(all_filled_fields.length+1)+' returning *',[...all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]),req.body["name"]])
 							.then((data)=>{
 								if (data.rows.length===0) {
 									requiresInsert=true
@@ -620,7 +620,7 @@ function CreateDynamicEndpoints() {
 							})
 						}
 						if (requiresInsert) {
-							db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>req.body[field]))
+							db2.query('insert into '+endpoint.endpoint+"("+all_filled_fields.join(',')+") values("+all_filled_fields.map((field,i)=>"$"+(i+1)).join(",")+") returning *",all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]))
 							.then((data)=>{
 								res.status(200).json(data.rows)
 							})
@@ -636,14 +636,14 @@ function CreateDynamicEndpoints() {
 			
 			app.patch(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
 				if (req.body.id) {
-					db.query('select * from password where password=$1',[req.body.pass])
+					db4.query('select * from password where password=$1',[req.body.pass])
 					.then((data)=>{
 						if (data.rows.length>0) {
 							var combinedfields = [...endpoint.requiredfields,...endpoint.optionalfields,...endpoint.excludedfields]
 							//console.log(combinedfields)
 							var all_filled_fields=combinedfields.filter((field)=>(field in req.body))
 							
-							return db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>req.body[field]),req.body.id])
+							return db2.query('update '+endpoint.endpoint+' set '+all_filled_fields.map((field,i)=>field+"=$"+(i+1)).join(",")+" where id=$"+(all_filled_fields.length+1)+" returning *",[...all_filled_fields.map((field)=>typeof req.body[field]==='string'?req.body[field].trim():req.body[field]),req.body.id])
 						} else {
 							var msg="Could not authenticate!";res.status(500).send(msg);throw msg
 						}
@@ -661,7 +661,7 @@ function CreateDynamicEndpoints() {
 			
 			app.delete(PREFIX+"/test/"+endpoint.endpoint,(req,res)=>{
 				if (req.body.id) {
-					db.query('select * from password where password=$1',[req.body.pass])
+					db4.query('select * from password where password=$1',[req.body.pass])
 					.then((data)=>{
 						if (data.rows.length>0) {
 							return db2.query('delete from '+endpoint.endpoint+'  where id=$1 returning *',[req.body.id])
@@ -773,7 +773,7 @@ app.post(PREFIX+"/validUser",(req,res)=>{
 })
 
 app.post(PREFIX+"/saveskilltree",(req,res)=>{
-	db.query('select * from password where password=$1',[req.body.pass])
+	db4.query('select * from password where password=$1',[req.body.pass])
 	.then((data)=>{
 		if (data.rows.length>0) {
 			return db.query('select * from skill_tree_data where class_id=$1 limit 1',[req.body.class_id])
@@ -799,7 +799,7 @@ app.post(PREFIX+"/saveskilltree",(req,res)=>{
 })
 
 app.post(PREFIX+"/test/saveskilltree",(req,res)=>{
-	db.query('select * from password where password=$1',[req.body.pass])
+	db4.query('select * from password where password=$1',[req.body.pass])
 	.then((data)=>{
 		if (data.rows.length>0) {
 			return db2.query('select * from skill_tree_data where class_id=$1 limit 1',[req.body.class_id])
