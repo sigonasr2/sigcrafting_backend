@@ -877,7 +877,7 @@ app.post(PREFIX+"/test/saveskilltree",(req,res)=>{
 	})
 })
 
-app.post(PREFIX+"/submitBuild",(req,res)=>{
+function submitBuild(req,res,db,send) {
 	if (req.body.id) {
 		db.query('select users.username from builds join users on users_id=users.id where builds.id=$1',[req.body.id])
 		.then((data)=>{
@@ -885,73 +885,61 @@ app.post(PREFIX+"/submitBuild",(req,res)=>{
 			if (data.rows.length>0&&data.rows[0].username===req.body.username) {
 				return db.query('update builds set creator=$1,build_name=$2,class1=(SELECT id from class WHERE name=$3 limit 1),class2=(SELECT id from class WHERE name=$4 limit 1),last_modified=$5,data=$6 where id=$7 returning id',[req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),req.body.data,req.body.id])
 					.then((data)=>{
-						res.status(200).send(data.rows[0])
+						if (send) {
+							res.status(200).send(data.rows[0])
+						}
 					})
 					.catch((err)=>{
 						console.log(err.message)
-						res.status(500).send(err.message)
+						if (send) {
+							res.status(500).send(err.message)
+						}
 					})
 			} else {
 				return db.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
 					.then((data)=>{
-						res.status(200).send(data.rows[0])
+						if (send) {
+							res.status(200).send(data.rows[0])
+						}
 					})
 					.catch((err)=>{
 						console.log(err.message)
-						res.status(500).send(err.message)
+						if (send) {
+							res.status(500).send(err.message)
+						}
 					})
 			}
 		})
 		.catch((err)=>{
 			console.log(err.message)
-			res.status(500).send(err.message)
+			if (send) {
+				res.status(500).send(err.message)
+			}
 		})
 	} else {
-		return db.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
-			.then((data)=>{
+		db.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
+		.then((data)=>{
+			if (send) {
 				res.status(200).send(data.rows[0])
-			})
-			.catch((err)=>{
+			}
+		})
+		.catch((err)=>{
 			console.log(err.message)
+			if (send) {
 				res.status(500).send(err.message)
-			})
+			}
+		})
 	}
+}
+
+app.post(PREFIX+"/submitBuild",(req,res)=>{
+	submitBuild(req,res,db,true)
+	submitBuild(req,res,db2,false)
 })
 
 app.post(PREFIX+"/test/submitBuild",(req,res)=>{
-	if (req.body.id) {
-		db2.query('select users.username from builds join users on users_id=users.id where builds.id=$1',[req.body.id])
-		.then((data)=>{
-			if (data.rows[0].username===req.body.username) {
-				return db2.query('update builds set creator=$1,build_name=$2,class1=(SELECT id from class WHERE name=$3 limit 1),class2=(SELECT id from class WHERE name=$4 limit 1),last_modified=$5,data=$6 returning id',[req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),req.body.data])
-					.then((data)=>{
-						res.status(200).send(data.rows[0])
-					})
-					.catch((err)=>{
-						res.status(500).send(err.message)
-					})
-			} else {
-				return db2.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
-					.then((data)=>{
-						res.status(200).send(data.rows[0])
-					})
-					.catch((err)=>{
-						res.status(500).send(err.message)
-					})
-			}
-		})
-		.catch((err)=>{
-			res.status(500).send(err.message)
-		})
-	} else {
-		return db2.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
-			.then((data)=>{
-				res.status(200).send(data.rows[0])
-			})
-			.catch((err)=>{
-				res.status(500).send(err.message)
-			})
-	}
+	submitBuild(req,res,db,true)
+	submitBuild(req,res,db2,false)
 })
 
 //Generates our table schema:

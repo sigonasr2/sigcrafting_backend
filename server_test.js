@@ -26,9 +26,6 @@ let allowCrossDomain = function(req, res, next) {
   app.use(allowCrossDomain);
  app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
  
- var authenticated = true;
-
- 
 const PREFIX=""
 
 const ENDPOINTDATA=[
@@ -695,17 +692,19 @@ app.get(PREFIX+'/data',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
-		if (endpoint.requiredfields.includes("name")) {
-			await db.query('select * from (select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc)t order by id asc')
-			.then((data)=>{
-				finalresult[endpoint.endpoint]={}
-				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
-			})
-		} else {
-			await db.query('select * from '+endpoint.endpoint+" order by id desc")
-			.then((data)=>{
-				finalresult[endpoint.endpoint]=data.rows
-			})
+		if (endpoint.endpoint!=="builds"&&endpoint.endpoint!=="users") {
+			if (endpoint.requiredfields.includes("name")) {
+				await db.query('select * from (select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc)t order by id asc')
+				.then((data)=>{
+					finalresult[endpoint.endpoint]={}
+					data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
+				})
+			} else {
+				await db.query('select * from '+endpoint.endpoint+" order by id desc")
+				.then((data)=>{
+					finalresult[endpoint.endpoint]=data.rows
+				})
+			}
 		}
 	}
 	res.status(200).json(finalresult)
@@ -715,17 +714,19 @@ app.get(PREFIX+'/test/data',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
-		if (endpoint.requiredfields.includes("name")) {
-			await db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
-			.then((data)=>{
-				finalresult[endpoint.endpoint]={}
-				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
-			})
-		} else {
-			await db2.query('select * from '+endpoint.endpoint+" order by id desc")
-			.then((data)=>{
-				finalresult[endpoint.endpoint]=data.rows
-			})
+		if (endpoint.endpoint!=="builds"&&endpoint.endpoint!=="users") {
+			if (endpoint.requiredfields.includes("name")) {
+				await db2.query('select distinct on (name) name,* from '+endpoint.endpoint+' order by name,id desc')
+				.then((data)=>{
+					finalresult[endpoint.endpoint]={}
+					data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.name]=val})
+				})
+			} else {
+				await db2.query('select * from '+endpoint.endpoint+" order by id desc")
+				.then((data)=>{
+					finalresult[endpoint.endpoint]=data.rows
+				})
+			}
 		}
 	}
 	res.status(200).json(finalresult)
@@ -735,11 +736,13 @@ app.get(PREFIX+'/dataid',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
-		await db.query('select * from '+endpoint.endpoint+' order by id asc')
-		.then((data)=>{
-			finalresult[endpoint.endpoint]={}
-			data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
-		})
+		if (endpoint.endpoint!=="builds"&&endpoint.endpoint!=="users") {
+			await db.query('select * from '+endpoint.endpoint+' order by id asc')
+			.then((data)=>{
+				finalresult[endpoint.endpoint]={}
+				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
+			})
+		}
 	}
 	res.status(200).json(finalresult)
 })
@@ -748,11 +751,13 @@ app.get(PREFIX+'/test/dataid',async(req,res)=>{
 	var finalresult = {}
 	var promises = []
 	for (var endpoint of ENDPOINTDATA) {
-		await db2.query('select * from '+endpoint.endpoint+' order by id asc')
-		.then((data)=>{
-			finalresult[endpoint.endpoint]={}
-			data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
-		})
+		if (endpoint.endpoint!=="builds"&&endpoint.endpoint!=="users") {
+			await db2.query('select * from '+endpoint.endpoint+' order by id asc')
+			.then((data)=>{
+				finalresult[endpoint.endpoint]={}
+				data.rows.forEach((val)=>{finalresult[endpoint.endpoint][val.id]=val})
+			})
+		}
 	}
 	res.status(200).json(finalresult)
 })
@@ -822,6 +827,71 @@ app.post(PREFIX+"/test/saveskilltree",(req,res)=>{
 	.catch((err)=>{
 		res.status(500).send(err.message)
 	})
+})
+
+function submitBuild(req,res,db,send) {
+	if (req.body.id) {
+		db.query('select users.username from builds join users on users_id=users.id where builds.id=$1',[req.body.id])
+		.then((data)=>{
+			console.log(data.rows)
+			if (data.rows.length>0&&data.rows[0].username===req.body.username) {
+				return db.query('update builds set creator=$1,build_name=$2,class1=(SELECT id from class WHERE name=$3 limit 1),class2=(SELECT id from class WHERE name=$4 limit 1),last_modified=$5,data=$6 where id=$7 returning id',[req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),req.body.data,req.body.id])
+					.then((data)=>{
+						if (send) {
+							res.status(200).send(data.rows[0])
+						}
+					})
+					.catch((err)=>{
+						console.log(err.message)
+						if (send) {
+							res.status(500).send(err.message)
+						}
+					})
+			} else {
+				return db.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
+					.then((data)=>{
+						if (send) {
+							res.status(200).send(data.rows[0])
+						}
+					})
+					.catch((err)=>{
+						console.log(err.message)
+						if (send) {
+							res.status(500).send(err.message)
+						}
+					})
+			}
+		})
+		.catch((err)=>{
+			console.log(err.message)
+			if (send) {
+				res.status(500).send(err.message)
+			}
+		})
+	} else {
+		db.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
+		.then((data)=>{
+			if (send) {
+				res.status(200).send(data.rows[0])
+			}
+		})
+		.catch((err)=>{
+			console.log(err.message)
+			if (send) {
+				res.status(500).send(err.message)
+			}
+		})
+	}
+}
+
+app.post(PREFIX+"/submitBuild",(req,res)=>{
+	submitBuild(req,res,db,true)
+	submitBuild(req,res,db2,false)
+})
+
+app.post(PREFIX+"/test/submitBuild",(req,res)=>{
+	submitBuild(req,res,db,true)
+	submitBuild(req,res,db2,false)
 })
 
 //Generates our table schema:
