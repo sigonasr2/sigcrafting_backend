@@ -27,3 +27,5 @@ alter table class_skill_data alter column max_hp_decrease set data type text;
 alter table class_skill_data alter column natural_pp_recovery set data type text;
 alter table class_skill_data alter column pb_gauge_fortification set data type text;
 alter table site_data rename column field to name;
+alter table food add column description text;
+alter table food add column icon text;

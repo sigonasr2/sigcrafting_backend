@@ -886,7 +886,10 @@ function submitBuild(req,res,db,send) {
 				return db.query('update builds set creator=$1,build_name=$2,class1=(SELECT id from class WHERE name=$3 limit 1),class2=(SELECT id from class WHERE name=$4 limit 1),last_modified=$5,data=$6 where id=$7 returning id',[req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),req.body.data,req.body.id])
 					.then((data)=>{
 						if (send) {
-							res.status(200).send(data.rows[0])
+							res.status(200).json(data.rows[0])
+						}
+						if (db2) {
+							db2.query('update builds set creator=$1,build_name=$2,class1=(SELECT id from class WHERE name=$3 limit 1),class2=(SELECT id from class WHERE name=$4 limit 1),last_modified=$5,data=$6 where id=$7 returning id',[req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),req.body.data,req.body.id])
 						}
 					})
 					.catch((err)=>{
@@ -899,7 +902,10 @@ function submitBuild(req,res,db,send) {
 				return db.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
 					.then((data)=>{
 						if (send) {
-							res.status(200).send(data.rows[0])
+							res.status(200).json(data.rows[0])
+						}
+						if (db2) {
+							db2.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice,id) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10,$11) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0,data.rows[0].id])
 						}
 					})
 					.catch((err)=>{
@@ -920,7 +926,10 @@ function submitBuild(req,res,db,send) {
 		db.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0])
 		.then((data)=>{
 			if (send) {
-				res.status(200).send(data.rows[0])
+				res.status(200).json(data.rows[0])
+			}
+			if (db2) {
+				db2.query('insert into builds(users_id,creator,build_name,class1,class2,created_on,last_modified,likes,data,editors_choice,id) values((SELECT id from users WHERE username=$1 limit 1),$2,$3,(SELECT id from class WHERE name=$4 limit 1),(SELECT id from class WHERE name=$5 limit 1),$6,$7,$8,$9,$10,$11) returning id',[req.body.username,req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),new Date(),0,req.body.data,0,data.rows[0].id])
 			}
 		})
 		.catch((err)=>{
@@ -934,16 +943,30 @@ function submitBuild(req,res,db,send) {
 
 app.post(PREFIX+"/submitBuild",(req,res)=>{
 	submitBuild(req,res,db,true)
-	if (db2) {
-		submitBuild(req,res,db2,false)
-	}
 })
 
 app.post(PREFIX+"/test/submitBuild",(req,res)=>{
 	submitBuild(req,res,db,true)
-	if (db2) {
-		submitBuild(req,res,db2,false)
-	}
+})
+
+app.get(PREFIX+"/getBuild",(req,res)=>{
+	db.query('select * from builds where id=$1 limit 1',[req.query.id])
+	.then((data)=>{
+		res.status(200).json(data.rows[0])
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
+})
+
+app.get(PREFIX+"/test/getBuild",(req,res)=>{
+	db2.query('select * from builds where id=$1 limit 1',[req.query.id])
+	.then((data)=>{
+		res.status(200).json(data.rows[0])
+	})
+	.catch((err)=>{
+		res.status(500).send(err.message)
+	})
 })
 
 //Generates our table schema:

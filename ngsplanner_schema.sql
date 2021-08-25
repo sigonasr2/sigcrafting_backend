@@ -14,6 +14,8 @@ CREATE TABLE "food_mult" (
 CREATE TABLE "food" (
   "id" SERIAL UNIQUE PRIMARY KEY,
   "name" text,
+  "description" text,
+  "icon" text,
   "potency" boolean,
   "pp" boolean,
   "dmg_res" boolean,

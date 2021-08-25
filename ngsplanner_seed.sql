@@ -1,4 +1,3 @@
-delete from site_data;
 delete from skill_tree_data;
 delete from class_skill_data;
 delete from class_skill;
@@ -30,10 +29,10 @@ insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,we
 insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery)
 	values(1,1.05,10,1.05,1.05,1,1,1,1);
 
-insert into food(name,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
-	values('Rich Aelio Meat',true,false,false,false,true,false,false,false,0,0);
-insert into food(name,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
-	values('Light Aelio Meat',true,false,false,false,false,true,false,false,0,0);
+insert into food(name,description,icon,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
+	values('Rich Aelio Meat','Meat','',true,false,false,false,true,false,false,false,0,0);
+insert into food(name,description,icon,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
+	values('Light Aelio Meat','Meat','',true,false,false,false,false,true,false,false,0,0);
 	
 insert into class(name,icon) values('Hunter','/icons/UINGSClassHu.png');
 insert into class(name,icon) values('Fighter','/icons/UINGSClassFi.png');
@@ -281,5 +280,3 @@ insert into skill_tree_data(class_id,data,skill_data,line_color,line_width,grids
 	values((select id from class where name='Hunter'),'□  □  ,└□─┘□□, │  ││, │  □│, □─□┼□,    □ ','','#000000',3,80,60,10,10,60);
 
 insert into site_data(name,data) values('UNDER_CONSTRUCTION_TEXT','NGSplanner.com is currently under construction! Please check back after Sig yells at me enough to help finish it.');
-insert into site_data(name,data) values('h1','To please the soul');
-insert into site_data(name,data) values('h2','');
