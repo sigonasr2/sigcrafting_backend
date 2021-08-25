@@ -882,7 +882,7 @@ function submitBuild(req,res,db,send) {
 		db.query('select users.username from builds join users on users_id=users.id where builds.id=$1',[req.body.id])
 		.then((data)=>{
 			console.log(data.rows)
-			if (data.rows.length>0&&data.rows[0].username===req.body.username) {
+			if (data.rows.length>0&&data.rows[0].username===req.body.username&&data.rows[0].password_hash===sh.SecretHash(req.body.pass)) {
 				return db.query('update builds set creator=$1,build_name=$2,class1=(SELECT id from class WHERE name=$3 limit 1),class2=(SELECT id from class WHERE name=$4 limit 1),last_modified=$5,data=$6 where id=$7 returning id',[req.body.creator,req.body.build_name,req.body.class1,req.body.class2,new Date(),req.body.data,req.body.id])
 					.then((data)=>{
 						if (send) {
