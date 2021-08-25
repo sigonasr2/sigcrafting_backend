@@ -934,12 +934,16 @@ function submitBuild(req,res,db,send) {
 
 app.post(PREFIX+"/submitBuild",(req,res)=>{
 	submitBuild(req,res,db,true)
-	submitBuild(req,res,db2,false)
+	if (db2) {
+		submitBuild(req,res,db2,false)
+	}
 })
 
 app.post(PREFIX+"/test/submitBuild",(req,res)=>{
 	submitBuild(req,res,db,true)
-	submitBuild(req,res,db2,false)
+	if (db2) {
+		submitBuild(req,res,db2,false)
+	}
 })
 
 //Generates our table schema:
