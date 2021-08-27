@@ -202,6 +202,8 @@ insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit
 	values((select id from skill where name='Fixa Termina' limit 1),'Fixa Termina Lv.3',3,0,0,0,0,0,1.10,0,0,0,0,0,0);
 	
 insert into element(name)
+	values('None');
+insert into element(name)
 	values('Fire');
 insert into element(name)
 	values('Ice');
