@@ -162,7 +162,8 @@ CREATE TABLE "augment" (
   "battle_power_value" int,
   "pb_gauge_build" float,
   "popularity" int,
-  "editors_choice" int
+  "editors_choice" int,
+  "element_id" int
 );
 
 CREATE TABLE "skill" (
@@ -328,6 +329,11 @@ CREATE TABLE "site_data" (
   "data" text
 );
 
+CREATE TABLE "element" (
+  "id" SERIAL UNIQUE PRIMARY KEY,
+  "name" text
+);
+
 ALTER TABLE "builds" ADD FOREIGN KEY ("users_id") REFERENCES "users" ("id");
 
 ALTER TABLE "users" ADD FOREIGN KEY ("roles_id") REFERENCES "roles" ("id");
@@ -365,3 +371,5 @@ ALTER TABLE "builds" ADD FOREIGN KEY ("class1") REFERENCES "class" ("id");
 ALTER TABLE "builds" ADD FOREIGN KEY ("class2") REFERENCES "class" ("id");
 
 ALTER TABLE "skill_tree_data" ADD FOREIGN KEY ("class_id") REFERENCES "class" ("id");
+
+ALTER TABLE "augment" ADD FOREIGN KEY ("element_id") REFERENCES "element" ("id");
