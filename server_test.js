@@ -25,6 +25,8 @@ let allowCrossDomain = function(req, res, next) {
   }
   app.use(allowCrossDomain);
  app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+ const db4=db;
  
 const PREFIX=""
 
