@@ -35,6 +35,6 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
-EXPOSE 3006
+EXPOSE 3007
 
 CMD [ "nodemon", "server.js" ]

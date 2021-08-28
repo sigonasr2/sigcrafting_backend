@@ -8,6 +8,7 @@ delete from food_mult;
 delete from food;
 delete from armor;
 delete from augment;
+delete from element;
 delete from augment_type;
 delete from skill_data;
 delete from skill;
@@ -29,10 +30,10 @@ insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,we
 insert into food_mult(amount,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery)
 	values(1,1.05,10,1.05,1.05,1,1,1,1);
 
-insert into food(name,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
-	values('Rich Aelio Meat',true,false,false,false,true,false,false,false,0,0);
-insert into food(name,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
-	values('Light Aelio Meat',true,false,false,false,false,true,false,false,0,0);
+insert into food(name,description,icon,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
+	values('Rich Aelio Meat','Meat','',true,false,false,false,true,false,false,false,0,0);
+insert into food(name,description,icon,potency,pp,dmg_res,hp,pp_consumption,pp_recovery,weak_point_dmg,hp_recovery,popularity,editors_choice)
+	values('Light Aelio Meat','Meat','',true,false,false,false,false,true,false,false,0,0);
 	
 insert into class(name,icon) values('Hunter','/icons/UINGSClassHu.png');
 insert into class(name,icon) values('Fighter','/icons/UINGSClassFi.png');
@@ -200,39 +201,52 @@ insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit
 insert into skill_data(skill_id,name,level,variance,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,popularity,editors_choice)
 	values((select id from skill where name='Fixa Termina' limit 1),'Fixa Termina Lv.3',3,0,0,0,0,0,1.10,0,0,0,0,0,0);
 	
-insert into augment_type(name,icon)
-	values('Stamina','');
-insert into augment_type(name,icon)
-	values('Spirit','');
-insert into augment_type(name,icon)
-	values('Might','');
-insert into augment_type(name,icon)
-	values('Precision','');
+insert into element(name)
+	values('None');
+insert into element(name)
+	values('Fire');
+insert into element(name)
+	values('Ice');
+insert into element(name)
+	values('Lightning');
 
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Stamina' limit 1),1,0,5,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Stamina' limit 1),2,0,10,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Stamina' limit 1),3,0,15,0,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,5,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Spirit' limit 1),1,0,0,3,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,2,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Spirit' limit 1),2,0,0,4,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Spirit' limit 1),3,0,0,5,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,4,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Might' limit 1),1,0,0,0,1.01,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Might' limit 1),2,0,0,0,1.015,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Might' limit 1),3,0,0,0,1.02,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Precision' limit 1),1,0,0,0,0,1.01,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Precision' limit 1),2,0,0,0,0,1.015,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0);
-insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice)
-	values((select id from augment_type where name='Precision' limit 1),3,0,0,0,0,1.02,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0);
+insert into augment_type(name)
+	values('Stamina');
+insert into augment_type(name)
+	values('Spirit');
+insert into augment_type(name)
+	values('Might');
+insert into augment_type(name)
+	values('Precision');
+insert into augment_type(name)
+	values('Ice Weakness');
+
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Stamina' limit 1),1,0,5,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Stamina' limit 1),2,0,10,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Stamina' limit 1),3,0,15,0,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,5,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Spirit' limit 1),1,0,0,3,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,2,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Spirit' limit 1),2,0,0,4,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,3,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Spirit' limit 1),3,0,0,5,0,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,4,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Might' limit 1),1,0,0,0,1.01,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Might' limit 1),2,0,0,0,1.015,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Might' limit 1),3,0,0,0,1.02,0,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Precision' limit 1),1,0,0,0,0,1.01,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,4,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Precision' limit 1),2,0,0,0,0,1.015,0,0,0,0,0,0,0,0.1,0,0,0,0,0,0,0,5,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Precision' limit 1),3,0,0,0,0,1.02,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0,(select id from element where name='None' limit 1),'');
+insert into augment(augment_type_id,name,variance,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,affix_success_rate,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,pb_gauge_build,popularity,editors_choice,element_id,icon)
+	values((select id from augment_type where name='Ice Weakness' limit 1),1,0,0,0,0,1.02,0,0,0,0,0,0,0,0.09,0,0,0,0,0,0,0,6,0,0,0,(select id from element where name='Ice' limit 1),'');
 	
 insert into armor(name,rarity,level_req,def,hp,pp,mel_dmg,rng_dmg,tec_dmg,crit_rate,crit_dmg,pp_cost_reduction,active_pp_recovery,natural_pp_recovery,dmg_res,all_down_res,burn_res,freeze_res,blind_res,shock_res,panic_res,poison_res,battle_power_value,slot,icon,popularity,editors_choice)
 	values('Primm Armor',1,1,8,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,'/icons/20M6Z7t.png',0,0);
@@ -268,15 +282,15 @@ insert into class_skill(name,class_id,icon,description)
 	values('Assault Charge Advent',(SELECT id from class WHERE name='Gunner' limit 1),'','This is ');
 	
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('Hunter Physique Lv.1',(SELECT id from class_skill WHERE name='Hunter Physique' limit 1),'',1,'Effect Name',20,15,0.7,1,false,0.5,'',0,0,0,0,0,0,0,0,0);
+	values('Hunter Physique Lv.1',(SELECT id from class_skill WHERE name='Hunter Physique' limit 1),'',1,'Effect Name',20,15,'0.7','1',false,'0.5','','0','0','0','0','0','0','0',0,'0');
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('War Cry Lv.1',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',1,'Effect Name',14,10,0.5,1.1,false,0.8,'',0,0,0,0.6,0,0,0,0,0);
+	values('War Cry Lv.1',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',1,'Effect Name',14,10,0.5,'1.1','0.8',false,'0.6','','0','0','0','0','0','0','0',0,'0');
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('War Cry Lv.2',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',2,'Effect Name',11,11,0.8,1.0,false,0.7,'',0,0,0,0.9,0,0,0,0,0);
+	values('War Cry Lv.2',(SELECT id from class_skill WHERE name='War Cry' limit 1),'',2,'Effect Name',11,11,'0.8','1',false,'0.5','','0','0','0','0','0','0','0',0,'0');
 insert into class_skill_data(name,class_skill_id,dependency,level,effect,duration,cooldown,damage_taken,pa_potency,conditional_buff,pp_recovery,property,all_damage_buff,active_pp_recovery,status_ailment_accum,status_ailment_duration,pp_consumption,max_hp_decrease,natural_pp_recovery,added_pp,pb_gauge_fortification)
-	values('Assault Charge Advent',(SELECT id from class_skill WHERE name='Assault Charge Advent' limit 1),'',1,'Effect Name',30,24,1.0,1.1,false,0.8,'',0,0,0,0,0,0,0.6,0,0);
+	values('Assault Charge Advent',(SELECT id from class_skill WHERE name='Assault Charge Advent' limit 1),'',1,'Effect Name',30,24,'1.8','1',false,'0.5','','0','0','0','0','0','0','0',0,'1.6');
 
 insert into skill_tree_data(class_id,data,skill_data,line_color,line_width,gridsizex,gridsizey,gridpaddingx,gridpaddingy,halflineheight)
 	values((select id from class where name='Hunter'),'□  □  ,└□─┘□□, │  ││, │  □│, □─□┼□,    □ ','','#000000',3,80,60,10,10,60);
 
-insert into site_data(field,data) values('UNDER_CONSTRUCTION_TEXT','NGSplanner.com is currently under construction! Please check back after Sig yells at me enough to help finish it.');
+insert into site_data(name,data) values('UNDER_CONSTRUCTION_TEXT','NGSplanner.com is currently under construction! Please check back after Sig yells at me enough to help finish it.');
